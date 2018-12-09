@@ -1,20 +1,21 @@
 <template>
   <div id="app">
-    <v-avatar
-            color="grey lighten-4"
-          >
-            <img src="./assets/logo.png" alt="avatar">
-          </v-avatar>
+    <playlist></playlist>
+    <item-form></item-form>
   </div>
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
+import Playlist from './components/Playlist.vue'
+import HelloWorld from './components/HelloWorld.vue'
+import ItemForm from './components/ItemForm.vue'
 
 export default {
   name: 'app',
   components: {
-    // HelloWorld
+    Playlist,
+    //'item-form': ItemForm
+    ItemForm
   }
 }
 </script>
