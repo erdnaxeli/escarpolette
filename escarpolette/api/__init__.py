@@ -1,7 +1,7 @@
 from flask import jsonify, request
 from werkzeug.exceptions import BadRequest
 
-from escarpolette import app, db
+from escarpolette import app, db, player
 from escarpolette.models import Item
 
 
@@ -28,6 +28,10 @@ def add_item():
 
     item = Item(url=data["url"])
     db.session.add(item)
+    db.session.flush()
+
+    player.add_item(item.url)
+
     db.session.commit()
 
-    return jsonify({"title": ""})
+    return jsonify({"title": player.get_current_item_title()})
