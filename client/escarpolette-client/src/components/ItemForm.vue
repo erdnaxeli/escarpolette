@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<input v-model="url">
-		<v-btn @click="sendUrl"> envoyer </v-btn>
+		<v-btn color="primary" @click="sendUrl"> envoyer </v-btn>
 	</div>
 
 </template>
