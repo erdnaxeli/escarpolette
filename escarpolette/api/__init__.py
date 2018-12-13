@@ -3,6 +3,7 @@ from werkzeug.exceptions import BadRequest
 
 from escarpolette import app, db, player
 from escarpolette.models import Item
+from escarpolette.tools import get_url_metadata
 
 
 @app.route("/items", methods=["GET"])
@@ -26,7 +27,8 @@ def add_item():
     if data is None:
         raise BaddRequest("Missing data")
 
-    item = Item(url=data["url"])
+    metadata = get_url_metadata(data["url"])
+    item = Item(**metadata)
     db.session.add(item)
     db.session.flush()
 
@@ -34,4 +36,4 @@ def add_item():
 
     db.session.commit()
 
-    return jsonify({"title": player.get_current_item_title()})
+    return jsonify(metadata)

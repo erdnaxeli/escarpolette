@@ -11,6 +11,7 @@ sqlalchemy = "==1.2.*"
 flask = "*"
 flask-sqlalchemy = "*"
 flask-cors = "*"
+youtube-dl = "==2018.12.9"
 
 [requires]
 python_version = "3.6"
