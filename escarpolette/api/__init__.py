@@ -9,11 +9,18 @@ from escarpolette.tools import get_url_metadata
 @app.route("/items", methods=["GET"])
 def get_items():
     playlist = []
-    playing_idx = -1
+    playing_idx = 0
 
     for item in Item.query.order_by(Item.created_at).all():
-        playlist.append({"title": item.title, "url": item.url})
-        if not item.played:
+        playlist.append(
+            {
+                "artist": item.artist,
+                "duration": item.duration,
+                "title": item.title,
+                "url": item.url,
+            }
+        )
+        if item.played:
             playing_idx += 1
 
     data = {"playlist": playlist, "playing_idx": playing_idx}
