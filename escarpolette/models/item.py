@@ -1,4 +1,4 @@
-from escarpolette import db
+from escarpolette.extensions import db
 from datetime import datetime
 
 

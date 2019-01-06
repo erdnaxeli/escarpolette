@@ -11,6 +11,7 @@ flask = "^1.0"
 flask-sqlalchemy = "^2.3"
 flask-cors = "^3.0"
 youtube-dl = "^2019.1"
+flask-restplus = "^0.12.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.1"
