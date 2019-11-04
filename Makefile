@@ -1,8 +1,12 @@
 POETRY = poetry
 BLACK = $(POETRY) run black
+FLASK = $(POETRY) run flask
+
+export FLASK_APP = escarpolette
+export FLASK_ENV = development
 
 all:
-	$(POETRY) run ./main.py	
+	$(FLASK) run
 
 lint:
-	$(BLACK) .
+	$(BLACK) $(FLASK_APP)
