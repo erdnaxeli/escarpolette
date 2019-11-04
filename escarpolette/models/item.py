@@ -3,11 +3,13 @@ from datetime import datetime
 from sqlalchemy import text
 
 
-
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     created_at = db.Column(
-        db.DateTime, default=datetime.now, server_default=text("datetime()"), nullable=False
+        db.DateTime,
+        default=datetime.now,
+        server_default=text("datetime()"),
+        nullable=False,
     )
     artist = db.Column(db.String(255))
     duration = db.Column(db.Integer)

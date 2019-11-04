@@ -9,21 +9,17 @@ from escarpolette.tools import get_url_metadata
 ns = Namespace("items", description="Manage the playlist's items")
 
 item = ns.model(
-    'Item',
+    "Item",
     {
         "artist": fields.String(required=False),
         "duration": fields.Integer(required=False),
         "title": fields.String(required=False),
         "url": fields.String(required=True),
-    }
+    },
 )
 
 playlist = ns.model(
-    "Playlist",
-    {
-        "idx": fields.Integer,
-        "items": fields.List(fields.Nested(item)),
-    }
+    "Playlist", {"idx": fields.Integer, "items": fields.List(fields.Nested(item))}
 )
 
 
