@@ -30,3 +30,10 @@ Web client:
 * prevent adding playlists
 * android client
 * iOS client
+
+## Notes
+
+To start mpv:
+```Shell
+mpv --idle --no-terminal --input-ipc-server /tmp/mvp-socket
+```
