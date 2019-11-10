@@ -1,8 +1,9 @@
+from typing import Dict, List, Optional
 import json
 import select
 import socket
 
-from flask import current_app, _app_ctx_stack
+from flask import current_app, _app_ctx_stack, Flask
 
 
 class Player:
@@ -16,11 +17,11 @@ class Player:
         if app is not None:
             self.init_app(app)
 
-    def init_app(self, app):
-        app.config.setdefault("MPV_IPC_SOCKET", "/tmp/mpvsocket")
+    def init_app(self, app: Flask):
+        app.config.setdefault("MPV_IPC_SOCKET", "/tmp/mpv-socket")
         app.teardown_appcontext(self.teardown)
 
-    def teardown(self, exception):
+    def teardown(self, exception: Optional[Exception]):
         ctx = _app_ctx_stack.top
 
         if hasattr(ctx, "mpv_socket"):
@@ -36,9 +37,9 @@ class Player:
 
             return ctx.mpv_socket
 
-    def _send_command(self, *args):
-        """Send a command to mvp and return the response."""
-        data = {"command": args}
+    def _send_command(self, *command: str) -> Optional[Dict]:
+        """Send a command to MPV and return the response."""
+        data = {"command": command}
         payload = json.dumps(data).encode("utf8") + b"\n"
         self._connection.sendall(payload)
 
@@ -59,11 +60,14 @@ class Player:
                 # timeout
                 return None
 
-    def add_item(self, url):
+    def add_item(self, url: str):
         """Add a new item to the playlist."""
         self._send_command("loadfile", url, "append")
 
-    def get_current_item_title(self):
+    def get_current_item_title(self) -> Optional[str]:
         """Get the current playing item's title."""
         response = self._send_command("get_property", "metadata")
-        return response["data"]["title"]
+        if response is not None:
+            return response["data"]["title"]
+
+        return None

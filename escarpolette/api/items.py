@@ -1,3 +1,5 @@
+from typing import Dict
+
 from flask import jsonify, request
 from flask_restplus import Namespace, Resource, fields
 from werkzeug.exceptions import BadRequest
@@ -26,7 +28,7 @@ playlist = ns.model(
 @ns.route("/")
 class Items(Resource):
     @ns.marshal_list_with(playlist)
-    def get(self):
+    def get(self) -> Dict:
         playlist = []
         playing_idx = 0
 
@@ -47,11 +49,11 @@ class Items(Resource):
 
     @ns.expect(item)
     @ns.marshal_with(item, code=201)
-    def post(self):
+    def post(self) -> Dict:
         data = request.json
 
         if data is None:
-            raise BaddRequest("Missing data")
+            raise BadRequest("Missing data")
 
         metadata = get_url_metadata(data["url"])
         item = Item(**metadata)
@@ -62,4 +64,4 @@ class Items(Resource):
 
         db.session.commit()
 
-        return jsonify(metadata)
+        return metadata

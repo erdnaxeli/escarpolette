@@ -1,9 +1,11 @@
+from typing import Dict
+
 import youtube_dl
 from youtube_dl.utils import DownloadError
 from werkzeug.exceptions import BadRequest
 
 
-def get_url_metadata(url):
+def get_url_metadata(url: str) -> Dict[str, str]:
     """
     Return the metada associated to an URL.
 
