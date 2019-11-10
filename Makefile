@@ -2,15 +2,22 @@ POETRY = poetry
 BLACK = $(POETRY) run black
 FLASK = $(POETRY) run flask
 MYPY = $(POETRY) run mypy
+RADON = $(POETRY) run radon
 
 export FLASK_APP = escarpolette
 export FLASK_ENV = development
 
-all:
-	$(FLASK) run
+init:
+	$(POETRY) install
 
-lint:
+format:
 	$(BLACK) $(FLASK_APP)
 
-compile:
+complexity:
+	$(RADON) cc --total-average -nB -s escarpolette
+
+run:
+	$(FLASK) run
+
+build:
 	$(MYPY) --ignore-missing-import escarpolette
