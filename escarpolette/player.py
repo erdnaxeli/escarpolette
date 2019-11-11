@@ -11,6 +11,10 @@ from flask import current_app, _app_ctx_stack, Flask
 State = Enum("State", ("PLAYING", "PAUSED", "STOPPED"))
 
 
+class InvalidPlayerState(ValueError):
+    pass
+
+
 class Player:
     """
     Control mpv using IPC.
@@ -49,11 +53,15 @@ class Player:
             ctx.mpv_socket.close()
 
     def add_item(self, url: str) -> None:
-        """Add a new item to the playlist."""
-        self._send_command("loadfile", url, "append")
+        """Add a new item to the playlist.
 
-        if self._state != State.PLAYING:
-            self.play()
+        If the player was stopped, play the music.
+        """
+        if self._state == State.STOPPED:
+            self._send_command("loadfile", url, "append-play")
+            self._state = State.PLAYING
+        else:
+            self._send_command("loadfile", url, "append")
 
     def get_current_item_title(self) -> Optional[str]:
         """Get the current playing item's title."""
@@ -71,7 +79,7 @@ class Player:
         if self._state == State.PLAYING:
             return
         elif self._state == State.STOPPED:
-            self._send_command("playlist-next")
+            raise InvalidPlayerState("The player is stopped. Add an item to play it.")
         else:
             self._send_command("cycle", "pause")
 
@@ -105,6 +113,8 @@ class Player:
         """Send a command to MPV and return the response."""
         command_id = self._get_command_id()
         msg = {"command": command, "request_id": command_id}
+        self.app.logger.debug("Sending MPV commanv %s", msg)
+
         data = json.dumps(msg).encode("utf8") + b"\n"
         self._connection.sendall(data)
 
@@ -128,6 +138,6 @@ class Player:
             data = data[newline:]
 
             msg = json.loads(response.decode("utf8"))
+            self.app.logger.debug("Received MPV response %s", msg)
             if msg.get("request_id", -1) == command_id:
-                self.app.logger.info(msg)
                 return msg
