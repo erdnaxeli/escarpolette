@@ -1,6 +1,6 @@
 from typing import Dict
 
-from flask import jsonify, request
+from flask import request
 from flask_restplus import Namespace, Resource, fields
 from werkzeug.exceptions import BadRequest
 
@@ -13,10 +13,14 @@ ns = Namespace("items", description="Manage the playlist's items")
 item = ns.model(
     "Item",
     {
-        "artist": fields.String(required=False),
-        "duration": fields.Integer(required=False),
-        "title": fields.String(required=False),
-        "url": fields.String(required=True),
+        "artist": fields.String(readonly=True),
+        "duration": fields.Integer(readonly=True),
+        "title": fields.String(readonly=True),
+        "url": fields.Url(
+            absolute=True,
+            example="https://www.youtube.com/watch?v=bpA6fAz_r04",
+            required=True,
+        ),
     },
 )
 
