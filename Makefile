@@ -10,6 +10,9 @@ export FLASK_ENV = development
 init:
 	$(POETRY) install
 
+db-upgrade:
+	$(FLASK) db upgrade
+
 format:
 	$(BLACK) $(FLASK_APP)
 
