@@ -41,7 +41,7 @@ class Player:
                 [
                     "mpv",
                     "--idle",
-                    # "--no-terminal",
+                    "--no-terminal",
                     f"--input-ipc-server={app.config['MPV_IPC_SOCKET']}",
                 ]
             )
