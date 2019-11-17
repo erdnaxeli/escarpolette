@@ -135,6 +135,17 @@ Six = "*"
 
 [[package]]
 category = "main"
+description = "User session management for Flask"
+name = "flask-login"
+optional = false
+python-versions = "*"
+version = "0.4.1"
+
+[package.dependencies]
+Flask = "*"
+
+[[package]]
+category = "main"
 description = "SQLAlchemy database migrations for Flask applications using Alembic"
 name = "flask-migrate"
 optional = false
@@ -515,7 +526,7 @@ version = "0.6.0"
 more-itertools = "*"
 
 [metadata]
-content-hash = "cfc2561fece9ce62afac6ff61173e36bd956b587d453511c23755da4a78cd54f"
+content-hash = "012ece739b501c0950f4255ba39b52d2b7171d98821276587e40de1bdf19281f"
 python-versions = "^3.6"
 
 [metadata.hashes]
@@ -532,6 +543,7 @@ flake8 = ["45681a117ecc81e870cbf1262835ae4af5e7a8b08e40b944a8a6e6b895914cfb", "4
 flake8-polyfill = ["12be6a34ee3ab795b19ca73505e7b55826d5f6ad7230d31b18e106400169b9e9", "e44b087597f6da52ec6393a709e7108b2905317d0c0b744cdca6208e670d8eda"]
 flask = ["13f9f196f330c7c2c5d7a5cf91af894110ca0215ac051b5844701f2bfd934d52", "45eb5a6fd193d6cf7e0cf5d8a5b31f83d5faae0293695626f539a823e93b13f6"]
 flask-cors = ["72170423eb4612f0847318afff8c247b38bd516b7737adfc10d1c2cdbb382d16", "f4d97201660e6bbcff2d89d082b5b6d31abee04b1b3003ee073a6fd25ad1d69a"]
+flask-login = ["c815c1ac7b3e35e2081685e389a665f2c74d7e077cb93cecabaea352da4752ec"]
 flask-migrate = ["6fb038be63d4c60727d5dfa5f581a6189af5b4e2925bc378697b4f0a40cfb4e1", "a96ff1875a49a40bd3e8ac04fce73fdb0870b9211e6168608cbafa4eb839d502"]
 flask-restplus = ["3fad697e1d91dfc13c078abcb86003f438a751c5a4ff41b84c9050199d2eab62", "cdc27b5be63f12968a7f762eaa355e68228b0c904b4c96040a314ba7dc6d0e69"]
 flask-sqlalchemy = ["0078d8663330dc05a74bc72b3b6ddc441b9a744e2f56fe60af1a5bfc81334327", "6974785d913666587949f7c2946f7001e4fa2cb2d19f4e69ead02e4b8f50b33d"]

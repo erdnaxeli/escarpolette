@@ -1,6 +1,7 @@
 from typing import Dict
 
 from flask import request
+from flask_login import login_required
 from flask_restplus import Namespace, Resource, fields
 from werkzeug.exceptions import BadRequest
 
@@ -32,6 +33,7 @@ playlist = ns.model(
 @ns.route("/")
 class Items(Resource):
     @ns.marshal_list_with(playlist)
+    @login_required
     def get(self) -> Dict:
         playlist = []
         playing_idx = 0
@@ -53,6 +55,7 @@ class Items(Resource):
 
     @ns.expect(item)
     @ns.marshal_with(item, code=201)
+    @login_required
     def post(self) -> Dict:
         data = request.json
 

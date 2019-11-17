@@ -11,6 +11,7 @@ class Item(db.Model):
         server_default=text("datetime()"),
         nullable=False,
     )
+
     artist = db.Column(db.String(255))
     duration = db.Column(db.Integer)
     played = db.Column(db.Boolean, default=False, server_default=text("FALSE"))
