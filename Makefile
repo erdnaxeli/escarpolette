@@ -2,6 +2,7 @@ POETRY = poetry
 BLACK = $(POETRY) run black
 FLASK = $(POETRY) run flask
 MYPY = $(POETRY) run mypy
+PYTEST = $(POETRY) run pytest
 RADON = $(POETRY) run radon
 
 APP_HOST ?= 127.0.0.1
@@ -27,3 +28,8 @@ run:
 
 build:
 	$(MYPY) --ignore-missing-import escarpolette
+
+tests:
+	$(PYTEST) tests/
+
+.PHONY: init db-upgrade fromat complexity run build tests
