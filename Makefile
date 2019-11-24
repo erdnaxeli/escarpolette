@@ -18,7 +18,7 @@ db-upgrade:
 	$(FLASK) db upgrade
 
 format:
-	$(BLACK) $(FLASK_APP)
+	$(BLACK) $(FLASK_APP) tests
 
 complexity:
 	$(RADON) cc --total-average -nB -s escarpolette

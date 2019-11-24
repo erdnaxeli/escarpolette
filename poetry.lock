@@ -526,8 +526,8 @@ version = "0.6.0"
 more-itertools = "*"
 
 [metadata]
-content-hash = "012ece739b501c0950f4255ba39b52d2b7171d98821276587e40de1bdf19281f"
-python-versions = "^3.6"
+content-hash = "6396e0cef5275b20657353c314ea6dd033302dae9034e9dd16ab16199dbe6ceb"
+python-versions = "^3.7"
 
 [metadata.hashes]
 alembic = ["49277bb7242192bbb9eac58fed4fe02ec6c3a2a4b4345d2171197459266482b2"]

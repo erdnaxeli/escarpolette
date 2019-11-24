@@ -9,6 +9,7 @@ class Item(db.Model):
         db.DateTime,
         default=datetime.now,
         server_default=text("datetime()"),
+        index=True,
         nullable=False,
     )
 
@@ -17,3 +18,4 @@ class Item(db.Model):
     played = db.Column(db.Boolean, default=False, server_default=text("FALSE"))
     title = db.Column(db.String(255))
     url = db.Column(db.String(255), unique=True)
+    user_id = db.Column(db.String(36), index=True, nullable=False)
