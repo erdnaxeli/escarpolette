@@ -11,7 +11,7 @@ from flask import current_app, _app_ctx_stack, Flask
 State = Enum("State", ("PLAYING", "PAUSED", "STOPPED"))
 
 
-class InvalidPlayerState(ValueError):
+class PlayerCommandError(ValueError):
     pass
 
 
@@ -79,7 +79,7 @@ class Player:
         if self._state == State.PLAYING:
             return
         elif self._state == State.STOPPED:
-            raise InvalidPlayerState("The player is stopped. Add an item to play it.")
+            raise PlayerCommandError("The player is stopped. Add an item to play it.")
         else:
             self._send_command("cycle", "pause")
 
@@ -87,8 +87,10 @@ class Player:
 
     def pause(self) -> None:
         """Pause the current playlist."""
-        if self._state == State.PAUSED or self._state == State.STOPPED:
+        if self._state == State.PAUSED:
             return
+        elif self._state == State.STOPPED:
+            raise PlayerCommandError("The player is stopped.")
 
         self._send_command("cycle", "pause")
         self._state = State.PAUSED

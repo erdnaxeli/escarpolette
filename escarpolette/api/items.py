@@ -1,12 +1,14 @@
 from typing import Dict
 
 from flask import request
+from flask_login import current_user, login_required
 from flask_restplus import Namespace, Resource, fields
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import BadRequest, TooManyRequests
 
 from escarpolette.extensions import db, player
 from escarpolette.models import Item
-from escarpolette.tools import get_url_metadata
+from escarpolette.tools import get_content_metadata
+from escarpolette.rules import rules
 
 ns = Namespace("items", description="Manage the playlist's items")
 
@@ -32,6 +34,7 @@ playlist = ns.model(
 @ns.route("/")
 class Items(Resource):
     @ns.marshal_list_with(playlist)
+    @login_required
     def get(self) -> Dict:
         playlist = []
         playing_idx = 0
@@ -53,14 +56,19 @@ class Items(Resource):
 
     @ns.expect(item)
     @ns.marshal_with(item, code=201)
+    @login_required
     def post(self) -> Dict:
         data = request.json
 
         if data is None:
             raise BadRequest("Missing data")
 
-        metadata = get_url_metadata(data["url"])
-        item = Item(**metadata)
+        metadata = get_content_metadata(data["url"])
+        item = Item(user_id=current_user.id, **metadata)
+
+        if not rules.can_add_item(current_user, item):
+            raise TooManyRequests
+
         db.session.add(item)
         db.session.flush()
 

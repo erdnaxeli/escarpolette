@@ -5,7 +5,7 @@ from youtube_dl.utils import DownloadError
 from werkzeug.exceptions import BadRequest
 
 
-def get_url_metadata(url: str) -> Dict[str, str]:
+def get_content_metadata(url: str) -> Dict[str, str]:
     """
     Return the metada associated to an URL.
 
