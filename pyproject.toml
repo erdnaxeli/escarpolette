@@ -1,8 +1,12 @@
 [tool.poetry]
 name = "escarpolette"
 version = "0.1.0"
-description = ""
+description = "Manage your musical playlist with your friends without starting a war."
+license = "GPL-3.0"
 authors = ["Alexandre Morignot <erdnaxeli@cervoi.se>"]
+readme = "README.md"
+homepage = "https://github.com/erdnaxeli/escarpolette"
+repository = "https://github.com/erdnaxeli/escarpolette.git"
 
 [tool.poetry.dependencies]
 python = "^3.7"
