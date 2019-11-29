@@ -23,33 +23,33 @@ Web client:
 They should be available for most of the plateforms.
 
 
-## Run it
-
-### Linux
-
-Clone the repository, then go the folder and type:
+## Installation
 
 ```Shell
-make init
-make db-upgrade
-make run
+pip install escarpolette
+# generate a random secret key
+echo "SECRET_KEY = '$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)'" > config.cfg
 ```
-
-You can now open [localhost:5000](http://localhost:5000).
-Just add a new item to get the music playing!
 
 ### Android
 
 You will need [Termux](https://termux.com/).
-Then inside Termux you can install the dependencies with:
+Then inside Termux you can install it with:
 
 ```Shell
-pkg install python python-dev clang git make
-pip install poetry
+# dependencies
+pkg install python python-dev clang
+# escarpolette
+pip install escarpolette
 ```
 
-Then follow the Linux instructions.
 Note that while the project can run without wake-lock, acquiring it improve the performance (with a battery trade off).
+
+## Usage
+
+```Shell
+escarpolette --config config.cfg
+```
 
 ## Todo
 
