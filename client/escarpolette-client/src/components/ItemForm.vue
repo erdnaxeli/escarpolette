@@ -1,7 +1,14 @@
 <template>
 	<div>
-		<input v-model="url">
-		<v-btn color="primary" @click="sendUrl"> envoyer </v-btn>
+		<input >
+		<form>
+			<v-text-field
+	              label="lien vers votre contenu"
+	              v-model="url"
+	            >
+	        </v-text-field>
+	        <v-btn color="secondary" @click="sendUrl"> envoyer </v-btn>
+	    </form>
 	</div>
 
 </template>
@@ -17,6 +24,8 @@
 			sendUrl(){
 				axios.post(`http://192.168.1.28:5000/items`,{url: this.url}).then(response => {
 					console.log(response)
+				}).catch(error => {
+					console.log(error.response)
 				})
 			}
 		}

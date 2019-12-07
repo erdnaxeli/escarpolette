@@ -1,15 +1,23 @@
 <template>
 	<div id="app">
 		<v-app>
-			<v-toolbar class="white--text" color="primary">
-				<v-toolbar-title>Escarpolette</v-toolbar-title>
-				<v-spacer></v-spacer>
-				<v-toolbar-items class="hidden-sm-and-down">
-					<v-btn flat>Reset la playlist</v-btn>
-				</v-toolbar-items>
-			</v-toolbar>
-			<playlist></playlist>
-			<item-form></item-form>
+			<v-content>
+				<v-container fluid fill-height>
+	        <v-layout align-center justify-center>
+	          <v-flex xs12 sm8 md4>
+							<v-toolbar class="white--text" color="primary">
+								<v-toolbar-title>Escarpolette</v-toolbar-title>
+								<v-spacer></v-spacer>
+								<v-toolbar-items class="hidden-sm-and-down">
+									<v-btn flat><v-icon size="40" color="white">account_circle</v-icon></v-btn>
+								</v-toolbar-items>
+							</v-toolbar>
+							<playlist></playlist>
+							<item-form></item-form>
+						</v-flex>
+					</v-layout>
+				</v-container>
+			</v-content>
 		</v-app>
 	</div>
 </template>
@@ -34,6 +42,5 @@ export default {
 	-moz-osx-font-smoothing: grayscale;
 	text-align: center;
 	color: #2c3e50;
-	margin-top: 60px;
 }
 </style>
