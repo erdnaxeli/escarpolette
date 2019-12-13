@@ -27,6 +27,7 @@ black = {version = "^18.3-alpha.0",allows-prereleases = true}
 mypy = "^0.761"
 radon = "^4.0"
 pytest-mock = "^1.11"
+pre-commit = "^1.20"
 
 [tool.poetry.scripts]
 escarpolette = "escarpolette:__main__"
