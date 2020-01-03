@@ -22,7 +22,7 @@ gevent = "^1.4"
 click = "^7.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^4.1"
+pytest = "^5.3"
 black = {version = "^18.3-alpha.0",allows-prereleases = true}
 mypy = "^0.740.0"
 radon = "^4.0"
