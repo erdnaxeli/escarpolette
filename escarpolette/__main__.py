@@ -1,5 +1,5 @@
 import click
-from gevent.pywsgi import WSGIServer
+import uvicorn
 
 from escarpolette import app
 
@@ -22,9 +22,7 @@ from escarpolette import app
 )
 def run(config_file: click.Path, host: str, port: int) -> None:
     app.config.from_pyfile(config_file)
-
-    http_server = WSGIServer((host, port), app)
-    http_server.serve_forever()
+    uvicorn.run(app, host=host, port=port)
 
 
 run()
