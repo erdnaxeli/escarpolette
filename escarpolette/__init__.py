@@ -10,12 +10,11 @@ app = FastAPI(
     version="0.1",
     description="Manage your party's playlist without friction",
 )
-routers.init_app(app)
 
 # app = Flask(__name__, instance_relative_config=True)
 # app.config.from_object(DefaultSettings(app))
 # app.config.from_pyfile("application.cfg", silent=True)
 
-# routers.init_app(app)
+routers.init_app(app)
 # extensions.init_app(app)
 # LoginManager().init_app(app)
