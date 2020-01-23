@@ -1,18 +1,10 @@
-from flask import Flask
-from flask_cors import CORS
-from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
-from werkzeug.local import LocalProxy
+from fastapi import FastAPI
 
 from escarpolette.player import Player
+from escarpolette.settings import Config
 
 
-db = SQLAlchemy()
-player = Player()
-
-
-def init_app(app: Flask):
-    CORS(app)
-    Migrate(app, db)
-    db.init_app(app)
-    player.init_app(app)
+def init_app(app: FastAPI, config: Config):
+    # CORS(app)
+    # Migrate(app, db)
+    pass

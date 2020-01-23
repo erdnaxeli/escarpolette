@@ -1,6 +1,10 @@
-from escarpolette.extensions import db
+from sqlalchemy.orm import relationship
+
+from escarpolette.db import Base
 from escarpolette.models.base_model_mixin import BaseModelMixin
 
 
-class Playlist(BaseModelMixin, db.Model):
-    items = db.relationship("Item", back_populates="playlist",)
+class Playlist(BaseModelMixin, Base):
+    __tablename__ = "playlists"
+
+    items = relationship("Item", back_populates="playlist")
