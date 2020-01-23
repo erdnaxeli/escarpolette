@@ -8,7 +8,10 @@ import socket
 from flask import current_app, _app_ctx_stack, Flask
 
 
-State = Enum("State", ("PLAYING", "PAUSED", "STOPPED"))
+class State(str, Enum):
+    PLAYING = "PLAYING"
+    PAUSED = "PAUSED"
+    STOPPED = "STOPPED"
 
 
 class PlayerCommandError(ValueError):

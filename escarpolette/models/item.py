@@ -18,4 +18,4 @@ class Item(BaseModelMixin, db.Model):
         nullable=False,
     )
 
-    playlist = db.relationship("Playlist", back_populates="items",)
+    playlist = db.relationship("Playlist", back_populates="items")
