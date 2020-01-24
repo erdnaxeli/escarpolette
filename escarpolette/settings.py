@@ -1,6 +1,9 @@
 from datetime import timedelta
 from configparser import ConfigParser
 from typing import TextIO
+from uuid import uuid4
+
+from xdg import XDG_DATA_HOME
 
 
 class Default:
@@ -9,18 +12,43 @@ class Default:
     PORT = 8000
 
     # Database
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    DATABASE_URI = "sqlite:///"
+    # SQLALCHEMY_TRACK_MODIFICATIONS = False
+    DATABASE_URI = f"sqlite:///{XDG_DATA_HOME}/escarpolette/db.sqlite"
 
     # Authentication
     REMEMBER_COOKIE_DURATION = timedelta(days=390)  # ~13 months
 
 
 class Config(Default):
+    current_config = None
+
     def __init__(self, file: TextIO):
-        config = ConfigParser().read_file(file)
+        """Read the config from a given file.
 
-        self.HOST = config.get("HOST", self.HOST)
-        self.DATABASE_URI = config.get("DATABASE_URI", self.DATABASE_URI)
+        If some values are missing, apply defaults. In any case, write the
+        resulting config to the same file.
+        """
+        config = ConfigParser()
+        config.read_file(file)
 
-        self.SQLALCHEMY_DATABASE_URI = f"sqlite:///{app.instance_path}/db.sqlite"
+        if "DATABASE" not in config:
+            config["DATABASE"] = {}
+
+        if "SECURITY" not in config:
+            config["SECURITY"] = {}
+
+        if "SERVER" not in config:
+            config["SERVER"] = {}
+
+        self.HOST = config["SERVER"].get("HOST", self.HOST)
+        self.DATABASE_URI = config["DATABASE"].get("URI", self.DATABASE_URI)
+        self.SECRET_KEY = config["SECURITY"].get("SECRET_KEY", str(uuid4()))
+
+        config["DATABASE"] = {"URI": self.DATABASE_URI}
+        config["SECURTIY"] = {"SECRET_KEY": self.SECRET_KEY}
+        config["SERVER"] = {"HOST": self.HOST, "PORT": self.PORT}
+
+        config.write(file)
+
+        # save a singleton
+        Config.current_config = self
