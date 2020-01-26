@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from escarpolette.extensions import player
 from escarpolette.player import State
 
 router = APIRouter()

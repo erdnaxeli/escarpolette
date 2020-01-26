@@ -42,8 +42,9 @@ class Player:
         if self.mpv_socket is not None:
             self.mpv_socket.close()
 
-        # TODO: find why MPV does not respond to a SIGTERM signal
-        self.mpv.kill()
+        if self.mpv is not None:
+            # TODO: find why MPV does not respond to a SIGTERM signal
+            self.mpv.kill()
 
     def add_item(self, url: str) -> None:
         """Add a new item to the playlist.

@@ -5,7 +5,6 @@ from pydantic import BaseModel, HttpUrl, Field
 from flask_login import current_user, login_required
 from werkzeug.exceptions import BadRequest, TooManyRequests
 
-from escarpolette.extensions import db, player
 from escarpolette.models import Item
 from escarpolette.tools import get_content_metadata
 from escarpolette.rules import rules
