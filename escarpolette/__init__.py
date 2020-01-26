@@ -5,7 +5,8 @@ from fastapi import FastAPI
 from escarpolette import routers
 from escarpolette.user import LoginManager
 from escarpolette.settings import Config
-from escarpolette import extensions, db
+from escarpolette import db
+from escarpolette.player import current_player
 
 
 def create_app(config: Config):
@@ -17,7 +18,12 @@ def create_app(config: Config):
 
     routers.init_app(app)
     db.init_app(config)
-    extensions.init_app(app, config)
+    current_player.init_app(config)
+
+    @app.on_event("shutdown")
+    def shutdown():
+        current_player.shutdown()
+
     return app
 
 

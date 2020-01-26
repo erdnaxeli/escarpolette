@@ -12,4 +12,4 @@ player = Player()
 def init_app(app: FastAPI, config: Config):
     # CORS(app)
     # Migrate(app, db)
-    player.init_app(app)
+    player(config)

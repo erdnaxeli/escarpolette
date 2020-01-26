@@ -2,7 +2,6 @@ from typing import Dict, List
 
 from fastapi import APIRouter
 from pydantic import BaseModel, HttpUrl, Field
-from flask import request
 from flask_login import current_user, login_required
 from werkzeug.exceptions import BadRequest, TooManyRequests
 
@@ -58,13 +57,8 @@ def get() -> PlaylistOut:
 
 @router.post("/", status_code=201, response_model=ItemOut)
 # @login_required
-def post() -> Item:
-    data = request.json
-
-    if data is None:
-        raise BadRequest("Missing data")
-
-    metadata = get_content_metadata(data["url"])
+def post(data: ItemIn) -> Item:
+    metadata = get_content_metadata(data.url)
     item = Item(user_id=current_user.id, **metadata)
 
     if not rules.can_add_item(current_user, item):

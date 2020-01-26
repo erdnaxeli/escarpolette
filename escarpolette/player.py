@@ -5,7 +5,7 @@ import json
 import select
 import socket
 
-from flask import current_app, _app_ctx_stack, Flask
+from escarpolette.settings import Config
 
 
 class State(str, Enum):
@@ -19,41 +19,31 @@ class PlayerCommandError(ValueError):
 
 
 class Player:
-    """
-    Control mpv using IPC.
-
-    This is a Flask extension.
-    """
+    """Control mpv using IPC."""
 
     _command_id = 0
+    _mpv_ipc_socket = "/tmp/mpv-socket"
     _state = State.STOPPED
+    mpv: Optional[Popen] = None
+    mpv_socket: Optional[socket.socket] = None
 
-    def __init__(self, app: Flask = None) -> None:
-        if app is not None:
-            self.init_app(app)
+    def init_app(self, config: Config) -> None:
+        self._mpv_ipc_socket = config.MPV_IPC_SOCKET or self._mpv_ipc_socket
+        self.mpv = Popen(
+            [
+                "mpv",
+                "--idle",
+                "--no-terminal",
+                f"--input-ipc-server={self._mpv_ipc_socket}",
+            ]
+        )
 
-    def init_app(self, app: Flask) -> None:
-        self.app = app
+    def shutdown(self) -> None:
+        if self.mpv_socket is not None:
+            self.mpv_socket.close()
 
-        app.config.setdefault("MPV_IPC_SOCKET", "/tmp/mpv-socket")
-        app.teardown_appcontext(self.teardown)
-
-        @app.before_first_request
-        def init_mpv() -> None:
-            self.mpv = Popen(
-                [
-                    "mpv",
-                    "--idle",
-                    "--no-terminal",
-                    f"--input-ipc-server={app.config['MPV_IPC_SOCKET']}",
-                ]
-            )
-
-    def teardown(self, exception: Optional[Exception]) -> None:
-        ctx = _app_ctx_stack.top
-
-        if hasattr(ctx, "mpv_socket"):
-            ctx.mpv_socket.close()
+        # TODO: find why MPV does not respond to a SIGTERM signal
+        self.mpv.kill()
 
     def add_item(self, url: str) -> None:
         """Add a new item to the playlist.
@@ -100,15 +90,11 @@ class Player:
 
     @property
     def _connection(self) -> socket.socket:
-        ctx = _app_ctx_stack.top
-        if ctx is None:
-            raise RuntimeError("No app context available")
+        if self.mpv_socket is None:
+            self.mpv_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            self.mpv_socket.connect(self._mpv_ipc_socket)
 
-        if not hasattr(ctx, "mpv_socket"):
-            ctx.mpv_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            ctx.mpv_socket.connect(current_app.config["MPV_IPC_SOCKET"])
-
-        return ctx.mpv_socket
+        return self.mpv_socket
 
     def _get_command_id(self) -> int:
         self._command_id += 1
@@ -146,3 +132,6 @@ class Player:
             self.app.logger.debug("Received MPV response %s", msg)
             if msg.get("request_id", -1) == command_id:
                 return msg
+
+
+current_player = Player()

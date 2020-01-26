@@ -34,6 +34,9 @@ class Config(Default):
         if "DATABASE" not in config:
             config["DATABASE"] = {}
 
+        if "MPV" not in config:
+            config["MPV"] = {}
+
         if "SECURITY" not in config:
             config["SECURITY"] = {}
 
@@ -42,9 +45,14 @@ class Config(Default):
 
         self.HOST = config["SERVER"].get("HOST", self.HOST)
         self.DATABASE_URI = config["DATABASE"].get("URI", self.DATABASE_URI)
+        self.MPV_IPC_SOCKET = config["MPV"].get("IPC_SOCKET")
         self.SECRET_KEY = config["SECURITY"].get("SECRET_KEY", str(uuid4()))
 
         config["DATABASE"] = {"URI": self.DATABASE_URI}
+
+        if self.MPV_IPC_SOCKET is not None:
+            config["MVP"] = {"IPC_SOCKET": self.MPV_IPC_SOCKET}
+
         config["SECURTIY"] = {"SECRET_KEY": self.SECRET_KEY}
         config["SERVER"] = {"HOST": self.HOST, "PORT": self.PORT}
 

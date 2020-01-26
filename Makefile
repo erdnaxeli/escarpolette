@@ -1,6 +1,5 @@
 POETRY = poetry
 BLACK = $(POETRY) run black
-UVICORN = $(POETRY) run uvicorn
 MYPY = $(POETRY) run mypy
 PYTEST = $(POETRY) run pytest
 RADON = $(POETRY) run radon
@@ -24,7 +23,7 @@ complexity:
 	$(RADON) cc --total-average -nB -s escarpolette
 
 run:
-	$(UVICORN) escarpolette:app --reload
+	$(POETRY) run python -m escarpolette --dev
 
 build:
 	$(MYPY) --ignore-missing-import escarpolette
