@@ -44,6 +44,7 @@ class Config(Default):
             config["SERVER"] = {}
 
         self.HOST = config["SERVER"].get("HOST", self.HOST)
+        self.PORT = config["SERVER"].getint("PORT", fallback=self.PORT)
         self.DATABASE_URI = config["DATABASE"].get("URI", self.DATABASE_URI)
         self.MPV_IPC_SOCKET = config["MPV"].get("IPC_SOCKET")
         self.SECRET_KEY = config["SECURITY"].get("SECRET_KEY", str(uuid4()))
@@ -54,7 +55,7 @@ class Config(Default):
             config["MVP"] = {"IPC_SOCKET": self.MPV_IPC_SOCKET}
 
         config["SECURTIY"] = {"SECRET_KEY": self.SECRET_KEY}
-        config["SERVER"] = {"HOST": self.HOST, "PORT": self.PORT}
+        config["SERVER"] = {"HOST": self.HOST, "PORT": str(self.PORT)}
 
         config.write(file)
 

@@ -2,10 +2,14 @@ from enum import Enum
 from subprocess import Popen
 from typing import Dict, List, Optional
 import json
+import logging
 import select
 import socket
 
 from escarpolette.settings import Config
+
+
+logger = logging.getLogger(__name__)
 
 
 class State(str, Enum):
@@ -105,7 +109,7 @@ class Player:
         """Send a command to MPV and return the response."""
         command_id = self._get_command_id()
         msg = {"command": command, "request_id": command_id}
-        self.app.logger.debug("Sending MPV commanv %s", msg)
+        logger.debug("Sending MPV commanv %s", msg)
 
         data = json.dumps(msg).encode("utf8") + b"\n"
         self._connection.sendall(data)
@@ -130,9 +134,13 @@ class Player:
             data = data[newline:]
 
             msg = json.loads(response.decode("utf8"))
-            self.app.logger.debug("Received MPV response %s", msg)
+            logger.debug("Received MPV response %s", msg)
             if msg.get("request_id", -1) == command_id:
                 return msg
 
 
-current_player = Player()
+_current_player = Player()
+
+
+def get_player():
+    return _current_player

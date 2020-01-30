@@ -1,23 +1,19 @@
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException
 
-from escarpolette.player import State
+from escarpolette.player import State, get_player, Player
+from escarpolette.schemas import PlayerSchema
 
 router = APIRouter()
 
 
-class Player(BaseModel):
-    state: State
-
-
-@router.get("/", response_model=Player)
-def get() -> Player:
-    data = Player(state=player.get_state().name)
+@router.get("/", response_model=PlayerSchema)
+def get(player: Player = Depends(get_player)) -> PlayerSchema:
+    data = PlayerSchema(state=player.get_state().name)
     return data
 
 
 @router.patch("/", responses={400: {}})
-def patch(data: Player) -> None:
+def patch(data: PlayerSchema, player: Player = Depends(get_player)) -> None:
     if data.state == State.PLAYING:
         player.play()
     elif data.state == State.PAUSED:
