@@ -1,6 +1,8 @@
 from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 
 from escarpolette import routers
+
 # from escarpolette.user import LoginManager
 from escarpolette.settings import Config
 from escarpolette import db
@@ -21,6 +23,13 @@ def create_app(config: Config):
     @app.on_event("shutdown")
     def shutdown():
         get_player().shutdown()
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_origins=["*"],
+    )
 
     return app
 
