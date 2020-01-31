@@ -1,9 +1,7 @@
-from typing import TextIO
-
 from fastapi import FastAPI
 
 from escarpolette import routers
-from escarpolette.user import LoginManager
+# from escarpolette.user import LoginManager
 from escarpolette.settings import Config
 from escarpolette import db
 from escarpolette.player import get_player

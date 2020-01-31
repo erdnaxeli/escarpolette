@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
-from flask_login import current_user
-from werkzeug.exceptions import TooManyRequests
+# from flask_login import current_user
+# from werkzeug.exceptions import TooManyRequests
 
 from escarpolette.db import get_db, Session
 from escarpolette.models import Item
