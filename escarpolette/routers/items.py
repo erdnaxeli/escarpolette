@@ -13,7 +13,7 @@ router = APIRouter()
 
 
 def get_current_playlist(db: Session = Depends(get_db)):
-    playlist = db.query(Playlist).order_by(Playlist.created_at.desc()).one()
+    playlist = db.query(Playlist).order_by(Playlist.created_at.desc()).first()
     if playlist is None:
         playlist = Playlist()
 
