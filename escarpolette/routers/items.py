@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends
-# from flask_login import current_user
-# from werkzeug.exceptions import TooManyRequests
 
 from escarpolette.db import get_db, Session
+from escarpolette.login import get_current_user, User
 from escarpolette.models import Item
 from escarpolette.player import get_player, Player
 from escarpolette.schemas.item import ItemSchemaIn, ItemSchemaOut
@@ -14,7 +13,6 @@ router = APIRouter()
 
 
 @router.get("/", response_model=PlaylistSchemaOut)
-# @login_required
 def get(db: Session = Depends(get_db)) -> PlaylistSchemaOut:
     playlist = PlaylistSchemaOut()
 
@@ -34,9 +32,9 @@ def get(db: Session = Depends(get_db)) -> PlaylistSchemaOut:
 
 
 @router.post("/", status_code=201, response_model=ItemSchemaOut)
-# @login_required
 def post(
     data: ItemSchemaIn,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
     player: Player = Depends(get_player),
 ) -> Item:

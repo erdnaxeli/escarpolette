@@ -61,3 +61,7 @@ class Config(Default):
 
         # save a singleton
         Config.current_config = self
+
+
+def get_current_config():
+    return Config.current_config
