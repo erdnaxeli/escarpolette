@@ -2,7 +2,8 @@ from typing import Dict
 
 import youtube_dl
 from youtube_dl.utils import DownloadError
-from werkzeug.exceptions import BadRequest
+
+# from werkzeug.exceptions import BadRequest
 
 
 def get_content_metadata(url: str) -> Dict[str, str]:
