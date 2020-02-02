@@ -2,13 +2,13 @@
 
 This project provides a server and clients to manage your music playlist when you are hosting a party.
 
-It supports many sites, thanks to the awesome project [youtube-dl](https://rg3.github.io/youtube-dl/).
+It supports many sites thanks to the awesome project [youtube-dl](https://rg3.github.io/youtube-dl/).
 
 ## Features
 
 Server:
 * add items (and play them!)
-* get playlist's itmes
+* get playlist's items
 * runs on Android! (see [instructions](#Android))
 
 Web client:
@@ -16,8 +16,7 @@ Web client:
 
 ## Dependencies
 
-* Python 3.6
-* the dependencies manager [Poetry](https://poetry.eustace.io/)
+* Python 3.7
 * the player [mpv](https://mpv.io)
 
 They should be available for most of the plateforms.
@@ -27,8 +26,6 @@ They should be available for most of the plateforms.
 
 ```Shell
 pip install escarpolette
-# generate a random secret key
-echo "SECRET_KEY = '$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)'" > config.cfg
 ```
 
 ### Android
@@ -38,7 +35,7 @@ Then inside Termux you can install it with:
 
 ```Shell
 # dependencies
-pkg install python python-dev clang
+pkg install python python-dev clang mpv
 # escarpolette
 pip install escarpolette
 ```
@@ -48,15 +45,23 @@ Note that while the project can run without wake-lock, acquiring it improve the 
 ## Usage
 
 ```Shell
-escarpolette --config config.cfg
+escarpolette [--config config.cfg] [--host host] [--port port] [--help]
 ```
+
+The default configuration should be good for all the usages.
+
+## Dev
+
+You will need [Poetry](https://poetry.eustace.io/) to manage the dependencies.
+
+Clone the repo and then type `poetry install`.
+You can run the app with `poetry run python -m escarpolette`.
 
 ## Todo
 
 * server
-    * empty the playlist on startup
-    * bonjour / mDNS
     * votes
+    * bonjour / mDNS
     * prevent adding youtube / soundcloud playlists
     * restrictions by users
     * configuration of those restrictions by an admin
@@ -71,6 +76,6 @@ escarpolette --config config.cfg
         * no restrictions for him
         * force video order
 
-Don't count on it:
+Maybe one day?
 * android client
 * iOS client
