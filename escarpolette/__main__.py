@@ -6,6 +6,7 @@ import uvicorn
 from xdg import XDG_CONFIG_HOME, XDG_DATA_HOME
 
 from escarpolette import create_app
+from escarpolette.discovery import register
 from escarpolette.settings import Default, Config
 
 
@@ -44,8 +45,6 @@ def run(config_file: Optional[TextIO], host: str, port: int, dev: bool) -> None:
 
     TODO: setup loging
     """
-    # import pdb
-    # pdb.set_trace()
     if not path.exists(DEFAULT_CONFIG_FOLDER):
         mkdir(DEFAULT_CONFIG_FOLDER)
 
@@ -62,7 +61,10 @@ def run(config_file: Optional[TextIO], host: str, port: int, dev: bool) -> None:
 
     host = host or config.HOST
     port = port or config.PORT
-    uvicorn.run("escarpolette.app:app", host=host, port=port, reload=dev)
+
+    register(port)
+    app = create_app(config)
+    uvicorn.run(app, host=host, port=port, reload=dev)
 
 
 run()
