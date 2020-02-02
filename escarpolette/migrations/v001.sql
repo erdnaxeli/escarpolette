@@ -11,7 +11,7 @@ CREATE TABLE items (
     duration INTEGER,
     played BOOLEAN DEFAULT FALSE,
     title VARCHAR,
-    url VARCHAR UNIQUE,
+    url VARCHAR,
     user_id VARCHAR NOT NULL,
     playlist_id INTEGER NOT NULL,
     FOREIGN KEY (playlist_id)
@@ -21,3 +21,4 @@ CREATE TABLE items (
 );
 CREATE INDEX items_user_id_idx ON items (user_id);
 CREATE INDEX items_playlist_id_idx ON items (playlist_id);
+CREATE UNIQUE INDEX items_playlist_id_url_idx ON items (playlist_id, url) WHERE played IS FALSE;
