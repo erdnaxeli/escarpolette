@@ -24,11 +24,15 @@ def get_current_user(
     if not token:
         current_user = User(id=str(uuid4()))
     else:
-        claim = jwt.decode(token, config.SECRET_KEY, algorithms=[ALGORITHM])
-        current_user = User(id=claim["user_id"])
+        try:
+            claim = jwt.decode(token, config.SECRET_KEY, algorithms=[ALGORITHM])
+        except jwt.exceptions.DecodeError:
+            current_user = User(id=str(uuid4()))
+        else:
+            current_user = User(id=claim["user_id"])
 
     payload = {"user_id": current_user.id}
-    sign = jwt.encode(payload, config.SECRET_KEY, algorithm=ALGORITHM)
+    sign = jwt.encode(payload, config.SECRET_KEY, algorithm=ALGORITHM).decode("utf-8")
     response.set_cookie("token", sign, MAX_AGE)
 
     return current_user
