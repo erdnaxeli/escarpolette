@@ -50,7 +50,7 @@ def post(
     metadata = get_content_metadata(data.url)
     item = Item(user_id=current_user.id, playlist=playlist, **metadata)
 
-    if not rules.can_add_item(current_user, item):
+    if not rules.can_add_item(current_user, item, db):
         raise TooManyRequests
 
     playlist.items.append(item)
