@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
-from escarpolette.db import get_db, Session
+from .dependencies import get_db, get_current_playlist
 from escarpolette.login import get_current_user, User
 from escarpolette.models import Item, Playlist
 from escarpolette.player import get_player, Player
@@ -10,14 +11,6 @@ from escarpolette.tools import get_content_metadata
 from escarpolette.rules import rules
 
 router = APIRouter()
-
-
-def get_current_playlist(db: Session = Depends(get_db)):
-    playlist = db.query(Playlist).order_by(Playlist.created_at.desc()).first()
-    if playlist is None:
-        playlist = Playlist()
-
-    return playlist
 
 
 @router.get("/", response_model=PlaylistSchemaOut)
