@@ -55,6 +55,7 @@ def apply_migrations(engine):
 def get_db():
     try:
         db: Session = SessionLocal()
+        db.execute("PRAGMA foreign_keys = ON")
         yield db
     finally:
         db.close()
