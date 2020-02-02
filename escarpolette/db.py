@@ -1,12 +1,13 @@
 from importlib import resources
+from typing import Type
 
 from sqlalchemy import Column, create_engine, String
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from sqlalchemy.orm import sessionmaker, Session
 
 from escarpolette.settings import Config
 
-Base = declarative_base()
+Base: DeclarativeMeta = declarative_base()
 SessionLocal = sessionmaker(autocommit=False, autoflush=False)
 
 
@@ -55,6 +56,7 @@ def apply_migrations(engine):
 def get_db():
     try:
         db: Session = SessionLocal()
+        db.execute("PRAGMA foreign_keys = ON")
         yield db
     finally:
         db.close()
