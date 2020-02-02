@@ -2,7 +2,7 @@ from sqlalchemy import text, Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 
 from escarpolette.db import Base
-from escarpolette.models.base_model_mixin import BaseModelMixin
+from escarpolette.models.mixin import BaseModelMixin
 
 
 class Item(BaseModelMixin, Base):
@@ -16,7 +16,7 @@ class Item(BaseModelMixin, Base):
     user_id = Column(String(36), index=True, nullable=False)
     playlist_id = Column(
         Integer,
-        ForeignKey("playlist.id", ondelete="CASCADE"),
+        ForeignKey("playlists.id", ondelete="CASCADE"),
         index=True,
         nullable=False,
     )
