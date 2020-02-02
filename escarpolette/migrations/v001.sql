@@ -8,7 +8,7 @@ CREATE TABLE items (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     artist VARCHAR,
-    duration INTEGER
+    duration INTEGER,
     played BOOLEAN DEFAULT FALSE,
     title VARCHAR,
     url VARCHAR UNIQUE,
