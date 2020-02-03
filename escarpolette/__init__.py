@@ -1,12 +1,17 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
 
-from escarpolette import routers
-
-# from escarpolette.user import LoginManager
+from escarpolette import db, routers
+from escarpolette.models import Playlist
 from escarpolette.settings import Config
-from escarpolette import db
 from escarpolette.player import get_player
+
+
+def create_new_playlist(db: Session):
+    playlist = Playlist()
+    db.add(playlist)
+    db.commit()
 
 
 def create_app(config: Config):
@@ -24,14 +29,11 @@ def create_app(config: Config):
     def shutdown():
         get_player().shutdown()
 
+    with db.get_db() as db_session:
+        create_new_playlist(db_session)
+
     app.add_middleware(
         CORSMiddleware, allow_credentials=True, allow_methods=["*"], allow_origins=["*"]
     )
 
     return app
-
-
-# app.config.from_object(DefaultSettings(app))
-# app.config.from_pyfile("application.cfg", silent=True)
-
-# LoginManager().init_app(app)

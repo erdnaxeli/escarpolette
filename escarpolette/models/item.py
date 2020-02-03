@@ -12,7 +12,7 @@ class Item(BaseModelMixin, Base):
     duration = Column(Integer)
     played = Column(Boolean, default=False, server_default=text("FALSE"))
     title = Column(String(255))
-    url = Column(String(255), unique=True)
+    url = Column(String(255))
     user_id = Column(String(36), index=True, nullable=False)
     playlist_id = Column(
         Integer,

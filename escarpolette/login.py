@@ -2,6 +2,7 @@ from uuid import uuid4
 
 import jwt
 from fastapi import Cookie, Depends
+from jwt.exceptions import DecodeError
 from pydantic import BaseModel
 from starlette.responses import Response
 
@@ -26,7 +27,7 @@ def get_current_user(
     else:
         try:
             claim = jwt.decode(token, config.SECRET_KEY, algorithms=[ALGORITHM])
-        except jwt.exceptions.DecodeError:
+        except DecodeError:
             current_user = User(id=str(uuid4()))
         else:
             current_user = User(id=claim["user_id"])

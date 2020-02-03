@@ -1,5 +1,5 @@
+from contextlib import contextmanager
 from importlib import resources
-from typing import Type
 
 from sqlalchemy import Column, create_engine, String
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
@@ -53,6 +53,7 @@ def apply_migrations(engine):
         db.commit()
 
 
+@contextmanager
 def get_db():
     try:
         db: Session = SessionLocal()
