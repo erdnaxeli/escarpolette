@@ -31,7 +31,7 @@ class Player:
     mpv: Optional[Popen] = None
     mpv_socket: Optional[socket.socket] = None
 
-    def init_app(self, config: Config) -> None:
+    async def init_app(self, config: Config) -> None:
         self._mpv_ipc_socket = config.MPV_IPC_SOCKET or self._mpv_ipc_socket
         self.mpv = Popen(
             [

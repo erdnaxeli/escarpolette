@@ -14,7 +14,7 @@ def create_new_playlist(db: Session):
     db.commit()
 
 
-def create_app(config: Config):
+async def create_app(config: Config):
     app = FastAPI(
         title="Escarpolette",
         version="0.1",
@@ -23,7 +23,7 @@ def create_app(config: Config):
 
     routers.init_app(app)
     db.init_app(config)
-    get_player().init_app(config)
+    await get_player().init_app(config)
 
     @app.on_event("shutdown")
     def shutdown():
