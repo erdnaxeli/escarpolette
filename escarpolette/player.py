@@ -1,10 +1,11 @@
-from enum import Enum
-from subprocess import Popen
-from typing import Dict, List, Optional
+import asyncio
 import json
 import logging
 import select
 import socket
+from enum import Enum
+from subprocess import Popen
+from typing import Dict, List, Optional
 
 from escarpolette.settings import Config
 
@@ -41,6 +42,9 @@ class Player:
                 f"--input-ipc-server={self._mpv_ipc_socket}",
             ]
         )
+
+        loop = asyncio.get_event_loop()
+        loop.create_task(self._listen_events())
 
     def shutdown(self) -> None:
         if self.mpv_socket is not None:
@@ -96,14 +100,35 @@ class Player:
     @property
     def _connection(self) -> socket.socket:
         if self.mpv_socket is None:
-            self.mpv_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            self.mpv_socket.connect(self._mpv_ipc_socket)
+            self.mpv_socket = self._get_mpv_connection()
 
         return self.mpv_socket
 
     def _get_command_id(self) -> int:
         self._command_id += 1
         return self._command_id
+
+    def _get_mpv_connection(self):
+        mpv_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        mpv_socket.connect(self._mpv_ipc_socket)
+
+        return mpv_socket
+
+    async def _listen_events(self):
+        """Listen for events from MVP.
+
+        Open a connection to MVP, listen for events and update the playlist
+        accordingly.
+        """
+        # We want to let MPV start
+        await asyncio.sleep(2)
+
+        logger.debug("Connecting to MVP on %s", self._mpv_ipc_socket)
+        reader, _ = await asyncio.open_unix_connection(self._mpv_ipc_socket)
+
+        while True:
+            data = await reader.readuntil(b"\n")
+            logger.debug("Event from MVP: %s", data)
 
     def _send_command(self, *command: str) -> Optional[Dict]:
         """Send a command to MPV and return the response."""
