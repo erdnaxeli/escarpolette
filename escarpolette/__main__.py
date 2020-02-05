@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from os import mkdir, path
 from typing import Optional, TextIO
 
@@ -48,13 +49,15 @@ async def run(config_file: Optional[TextIO], host: str, port: int, dev: bool) ->
         * setup loging
         * use a FastAPI's "start" event to setup the app, and switch back to uvicorn?
     """
-    # import pdb
-    # pdb.set_trace()
     if not path.exists(DEFAULT_CONFIG_FOLDER):
         mkdir(DEFAULT_CONFIG_FOLDER)
 
     if not path.exists(DEFAULT_DATA_FOLDER):
         mkdir(DEFAULT_DATA_FOLDER)
+
+    ######################
+    # read configuration #
+    ######################
 
     if config_file is None:
         config_file = open(
@@ -63,7 +66,25 @@ async def run(config_file: Optional[TextIO], host: str, port: int, dev: bool) ->
 
     config = Config(config_file)
     config_file.close()
+
+    ###############
+    # set logging #
+    ###############
+
+    level = logging.INFO
+    if dev:
+        level = logging.DEBUG
+
+    logging.basicConfig(level=level)
+
+    ###################
+    # create ASGI app #
+    ###################
     app = await create_app(config)
+
+    ####################
+    # start web server #
+    ####################
 
     host = host or config.HOST
     port = port or config.PORT
