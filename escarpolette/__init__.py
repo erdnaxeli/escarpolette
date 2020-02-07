@@ -1,11 +1,16 @@
+import logging
+
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
+from starlette.requests import Request
 from sqlalchemy.orm import Session
 
 from escarpolette import db, routers
 from escarpolette.models import Playlist
 from escarpolette.settings import Config
 from escarpolette.player import get_player
+
+request_logger = logging.getLogger("escarpolette")
 
 
 def create_new_playlist(db: Session):
@@ -35,5 +40,11 @@ async def create_app(config: Config):
     app.add_middleware(
         CORSMiddleware, allow_credentials=True, allow_methods=["*"], allow_origins=["*"]
     )
+
+    @app.middleware("http")
+    async def log_request(request: Request, call_next):
+        request_logger.info("%s %s", request.method, request.url.path)
+        response = await call_next(request)
+        return response
 
     return app
