@@ -5,12 +5,19 @@ import select
 import socket
 from enum import Enum
 from subprocess import Popen
-from typing import Dict, List, Optional
+from typing import Dict, Optional
+
+from pydantic import BaseModel, ValidationError
+from pydantic.fields import Field
 
 from escarpolette.settings import Config
 
 
 logger = logging.getLogger(__name__)
+
+
+class MpvEvent(BaseModel):
+    name: str = Field(..., alias="event")
 
 
 class State(str, Enum):
@@ -85,7 +92,7 @@ class Player:
         else:
             self._send_command("cycle", "pause")
 
-        self._state = State.PLAYING
+        return None
 
     def pause(self) -> None:
         """Pause the current playlist."""
@@ -95,7 +102,7 @@ class Player:
             raise PlayerCommandError("The player is stopped.")
 
         self._send_command("cycle", "pause")
-        self._state = State.PAUSED
+        return None
 
     @property
     def _connection(self) -> socket.socket:
@@ -123,18 +130,45 @@ class Player:
         # We want to let MPV start
         await asyncio.sleep(2)
 
-        logger.debug("Connecting to MVP on %s", self._mpv_ipc_socket)
+        logger.info("Connecting to MVP on %s", self._mpv_ipc_socket)
         reader, _ = await asyncio.open_unix_connection(self._mpv_ipc_socket)
+        logger.info("Connected to MVP")
 
         while True:
             data = await reader.readuntil(b"\n")
-            logger.debug("Event from MVP: %s", data)
+            logger.debug("Received event from MVP: %s", data)
+
+            try:
+                event_data = json.loads(data)
+            except json.JSONDecodeError as e:
+                logger.debug("Cannot decode MVP event: %s", e)
+
+            try:
+                event = MpvEvent(**event_data)
+            except ValidationError as e:
+                logger.debug("Received unknown data from MPV: %s", e)
+                continue
+
+            if event.name == "idle":
+                logger.info("Player stopped")
+                self._state = State.STOPPED
+            elif event.name == "pause":
+                logger.info("Player paused")
+                self._state = State.PAUSED
+            elif event.name == "start-file":
+                logger.info("Player playing")
+                self._state = State.PLAYING
+            elif event.name == "unpause":
+                logger.info("Player playing")
+                self._state = State.PLAYING
+            else:
+                logger.debug("Unknow MPV event %s", event.name)
 
     def _send_command(self, *command: str) -> Optional[Dict]:
         """Send a command to MPV and return the response."""
         command_id = self._get_command_id()
         msg = {"command": command, "request_id": command_id}
-        logger.debug("Sending MPV commanv %s", msg)
+        logger.debug("Sending MPV command %s", msg)
 
         data = json.dumps(msg).encode("utf8") + b"\n"
         self._connection.sendall(data)
