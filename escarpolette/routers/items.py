@@ -1,4 +1,7 @@
-from fastapi import APIRouter, Depends
+import logging
+
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from .dependencies import get_db, get_current_playlist
@@ -10,11 +13,17 @@ from escarpolette.schemas.playlist import PlaylistSchemaOut
 from escarpolette.tools import get_content_metadata
 from escarpolette.rules import rules
 
+
+logger = logging.getLogger(__name__)
 router = APIRouter()
+
+ERROR_CONFLICT_MSG = "This item is already waiting to be played"
 
 
 @router.get("/", response_model=PlaylistSchemaOut)
-def get(current_playlist: Playlist = Depends(get_current_playlist), db: Session = Depends(get_db)) -> PlaylistSchemaOut:
+def get(
+    current_playlist: Playlist = Depends(get_current_playlist),
+) -> PlaylistSchemaOut:
     playlist = PlaylistSchemaOut()
 
     for item in current_playlist.items:
@@ -32,7 +41,12 @@ def get(current_playlist: Playlist = Depends(get_current_playlist), db: Session 
     return playlist
 
 
-@router.post("/", status_code=201, response_model=ItemSchemaOut)
+@router.post(
+    "/",
+    status_code=201,
+    response_model=ItemSchemaOut,
+    responses={409: {"description": ERROR_CONFLICT_MSG}},
+)
 async def post(
     data: ItemSchemaIn,
     current_user: User = Depends(get_current_user),
@@ -41,16 +55,21 @@ async def post(
     player: Player = Depends(get_player),
 ) -> Item:
     metadata = get_content_metadata(data.url)
-    item = Item(user_id=current_user.id, playlist=playlist, **metadata)
+    item = Item(user_id=current_user.id, **metadata)
 
     if not rules.can_add_item(current_user, item, db):
         raise TooManyRequests
 
+    playlist.items.append(item)
     db.add(playlist)
-    db.flush()
+
+    try:
+        db.flush()
+    except IntegrityError as e:
+        logger.debug("Integrity error while trying to add a new item: %s", e)
+        raise HTTPException(status_code=409, detail=ERROR_CONFLICT_MSG)
 
     await player.add_item(item.url)
-
     db.commit()
 
     return item

@@ -2,6 +2,14 @@
 
 ## 0 (dev)
 
+### 0.5.1
+
+Bugfix:
+* return an HTTP error 409 instead of 500 on duplicate item
+
+Internal:
+* ensure playlist's items are correctly ordered, and prepare the field for reordering features
+
 ### 0.5.0
 
 Features:

@@ -77,7 +77,7 @@ async def run(config_file: Optional[TextIO], host: str, port: int, dev: bool) ->
 
     logging.basicConfig(
         level=level,
-        format="%(asctime)s - %(levelname)s - %(thread)d - %(name)s:%(lineno)s - %(message)s",
+        format="%(asctime)s - %(levelname)s - %(name)s:%(lineno)s - %(message)s",
     )
 
     ###################
