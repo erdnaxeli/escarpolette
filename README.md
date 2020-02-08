@@ -50,7 +50,7 @@ escarpolette [--config config.cfg] [--host host] [--port port] [--help]
 
 The default configuration should be good for all the usages.
 
-## Dev
+## Dev
 
 You will need [Poetry](https://poetry.eustace.io/) to manage the dependencies.
 
