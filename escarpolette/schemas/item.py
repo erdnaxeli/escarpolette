@@ -13,7 +13,10 @@ class ItemSchemaIn(BaseItemSchema):
 class ItemSchemaOut(BaseItemSchema):
     class Config:
         orm_mode = True
+        extra = "ignore"
 
     artist: str = Field(..., example="Vic Dibitetto")
     duration: int = Field(..., example=94)
+    id: int
+    played: bool
     title: str = Field(..., example="Anybody want cawfee?!")
