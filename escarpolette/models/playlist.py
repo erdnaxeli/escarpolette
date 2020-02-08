@@ -8,7 +8,12 @@ from escarpolette.models.mixin import BaseModelMixin
 class Playlist(BaseModelMixin, Base):
     __tablename__ = "playlists"
 
-    items = relationship("Item", back_populates="playlist", order_by="Item.position", collection_class=ordering_list('position'))
+    items = relationship(
+        "Item",
+        back_populates="playlist",
+        order_by="Item.position",
+        collection_class=ordering_list("position"),
+    )
 
     @classmethod
     def get_current_playlist(cls, db_session):
