@@ -1,4 +1,7 @@
-from fastapi import APIRouter, Depends
+import logging
+
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from .dependencies import get_db, get_current_playlist
@@ -10,7 +13,11 @@ from escarpolette.schemas.playlist import PlaylistSchemaOut
 from escarpolette.tools import get_content_metadata
 from escarpolette.rules import rules
 
+
+logger = logging.getLogger(__name__)
 router = APIRouter()
+
+ERROR_CONFLICT_MSG = "This item is already waiting to be played"
 
 
 @router.get("/", response_model=PlaylistSchemaOut)
@@ -34,7 +41,12 @@ def get(
     return playlist
 
 
-@router.post("/", status_code=201, response_model=ItemSchemaOut)
+@router.post(
+    "/",
+    status_code=201,
+    response_model=ItemSchemaOut,
+    responses={409: {"description": ERROR_CONFLICT_MSG}},
+)
 async def post(
     data: ItemSchemaIn,
     current_user: User = Depends(get_current_user),
@@ -50,10 +62,14 @@ async def post(
 
     playlist.items.append(item)
     db.add(playlist)
-    db.flush()
+
+    try:
+        db.flush()
+    except IntegrityError as e:
+        logger.debug("Integrity error while trying to add a new item: %s", e)
+        raise HTTPException(status_code=409, detail=ERROR_CONFLICT_MSG)
 
     await player.add_item(item.url)
-
     db.commit()
 
     return item
