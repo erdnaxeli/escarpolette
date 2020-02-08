@@ -11,5 +11,5 @@ def get_db():
 
 
 def get_current_playlist(db: Session = Depends(get_db)):
-    playlist = db.query(Playlist).order_by(Playlist.created_at.desc()).first()
+    playlist = Playlist.get_current_playlist(db)
     return playlist

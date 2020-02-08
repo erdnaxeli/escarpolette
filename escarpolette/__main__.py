@@ -1,8 +1,11 @@
+import asyncio
+import logging
 from os import mkdir, path
 from typing import Optional, TextIO
 
-import click
-import uvicorn
+import asyncclick as click
+from hypercorn.config import Config as HConfig
+from hypercorn.asyncio import serve
 from xdg import XDG_CONFIG_HOME, XDG_DATA_HOME
 
 from escarpolette import create_app
@@ -36,21 +39,25 @@ DEFAULT_DATA_FOLDER = path.join(XDG_DATA_HOME, "escarpolette")
     type=bool,
     is_flag=True,
 )
-def run(config_file: Optional[TextIO], host: str, port: int, dev: bool) -> None:
+async def run(config_file: Optional[TextIO], host: str, port: int, dev: bool) -> None:
     """Run the application.
 
     Create default folders for config and data and the default config file if
     no one is given, create the fastapi app and start the server.
 
-    TODO: setup loging
+    TODO:
+        * setup loging
+        * use a FastAPI's "start" event to setup the app, and switch back to uvicorn?
     """
-    # import pdb
-    # pdb.set_trace()
     if not path.exists(DEFAULT_CONFIG_FOLDER):
         mkdir(DEFAULT_CONFIG_FOLDER)
 
     if not path.exists(DEFAULT_DATA_FOLDER):
         mkdir(DEFAULT_DATA_FOLDER)
+
+    ######################
+    # read configuration #
+    ######################
 
     if config_file is None:
         config_file = open(
@@ -60,9 +67,36 @@ def run(config_file: Optional[TextIO], host: str, port: int, dev: bool) -> None:
     config = Config(config_file)
     config_file.close()
 
+    ###############
+    # set logging #
+    ###############
+
+    level = logging.INFO
+    if dev:
+        level = logging.DEBUG
+
+    logging.basicConfig(
+        level=level,
+        format="%(asctime)s - %(levelname)s - %(thread)d - %(name)s:%(lineno)s - %(message)s",
+    )
+
+    ###################
+    # create ASGI app #
+    ###################
+    app = await create_app(config)
+
+    ####################
+    # start web server #
+    ####################
+
     host = host or config.HOST
     port = port or config.PORT
-    uvicorn.run("escarpolette.app:app", host=host, port=port, reload=dev)
+
+    server_config = HConfig()
+    server_config.bind = [f"{host}:{port}"]
+    loop = asyncio.get_event_loop()
+    future = loop.create_task(serve(app, server_config))
+    await future
 
 
-run()
+run(_anyio_backend="asyncio")

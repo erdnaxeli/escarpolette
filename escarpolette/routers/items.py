@@ -14,10 +14,10 @@ router = APIRouter()
 
 
 @router.get("/", response_model=PlaylistSchemaOut)
-def get(db: Session = Depends(get_db)) -> PlaylistSchemaOut:
+def get(current_playlist: Playlist = Depends(get_current_playlist), db: Session = Depends(get_db)) -> PlaylistSchemaOut:
     playlist = PlaylistSchemaOut()
 
-    for item in db.query(Item).order_by(Item.created_at).all():
+    for item in current_playlist.items:
         playlist.items.append(
             ItemSchemaOut(
                 artist=item.artist,
@@ -33,7 +33,7 @@ def get(db: Session = Depends(get_db)) -> PlaylistSchemaOut:
 
 
 @router.post("/", status_code=201, response_model=ItemSchemaOut)
-def post(
+async def post(
     data: ItemSchemaIn,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
@@ -46,11 +46,10 @@ def post(
     if not rules.can_add_item(current_user, item, db):
         raise TooManyRequests
 
-    playlist.items.append(item)
     db.add(playlist)
     db.flush()
 
-    player.add_item(item.url)
+    await player.add_item(item.url)
 
     db.commit()
 
