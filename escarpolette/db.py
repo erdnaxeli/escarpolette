@@ -55,9 +55,9 @@ def apply_migrations(engine):
 
 @contextmanager
 def get_db():
+    db: Session = SessionLocal()
+    db.execute("PRAGMA foreign_keys = ON")
     try:
-        db: Session = SessionLocal()
-        db.execute("PRAGMA foreign_keys = ON")
         yield db
     finally:
         db.close()

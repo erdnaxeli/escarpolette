@@ -8,6 +8,7 @@ from typing import Any, Dict, Optional, Tuple
 from pydantic import BaseModel, ValidationError
 from pydantic.fields import Field
 
+from escarpolette.models import Playlist
 from escarpolette.settings import Config
 
 
@@ -155,7 +156,10 @@ class Player:
                 logger.debug("Received unknown message from MPV: %s", e)
                 continue
 
-            if event.name == "idle":
+            if event.name == "end-file":
+                logger.info("Track ended")
+                Playlist.item_ended()
+            elif event.name == "idle":
                 logger.info("Player stopped")
                 self._state = State.STOPPED
             elif event.name == "pause":
