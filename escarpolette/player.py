@@ -1,15 +1,23 @@
-from enum import Enum
-from subprocess import Popen
-from typing import Dict, List, Optional
+import asyncio
 import json
 import logging
 import select
 import socket
+from enum import Enum
+from subprocess import Popen
+from typing import Dict, Optional
+
+from pydantic import BaseModel, ValidationError
+from pydantic.fields import Field
 
 from escarpolette.settings import Config
 
 
 logger = logging.getLogger(__name__)
+
+
+class MpvEvent(BaseModel):
+    name: str = Field(..., alias="event")
 
 
 class State(str, Enum):
@@ -31,7 +39,7 @@ class Player:
     mpv: Optional[Popen] = None
     mpv_socket: Optional[socket.socket] = None
 
-    def init_app(self, config: Config) -> None:
+    async def init_app(self, config: Config) -> None:
         self._mpv_ipc_socket = config.MPV_IPC_SOCKET or self._mpv_ipc_socket
         self.mpv = Popen(
             [
@@ -41,6 +49,9 @@ class Player:
                 f"--input-ipc-server={self._mpv_ipc_socket}",
             ]
         )
+
+        loop = asyncio.get_event_loop()
+        loop.create_task(self._listen_events())
 
     def shutdown(self) -> None:
         if self.mpv_socket is not None:
@@ -81,7 +92,7 @@ class Player:
         else:
             self._send_command("cycle", "pause")
 
-        self._state = State.PLAYING
+        return None
 
     def pause(self) -> None:
         """Pause the current playlist."""
@@ -91,13 +102,12 @@ class Player:
             raise PlayerCommandError("The player is stopped.")
 
         self._send_command("cycle", "pause")
-        self._state = State.PAUSED
+        return None
 
     @property
     def _connection(self) -> socket.socket:
         if self.mpv_socket is None:
-            self.mpv_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            self.mpv_socket.connect(self._mpv_ipc_socket)
+            self.mpv_socket = self._get_mpv_connection()
 
         return self.mpv_socket
 
@@ -105,11 +115,60 @@ class Player:
         self._command_id += 1
         return self._command_id
 
+    def _get_mpv_connection(self):
+        mpv_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        mpv_socket.connect(self._mpv_ipc_socket)
+
+        return mpv_socket
+
+    async def _listen_events(self):
+        """Listen for events from MVP.
+
+        Open a connection to MVP, listen for events and update the playlist
+        accordingly.
+        """
+        # We want to let MPV start
+        await asyncio.sleep(2)
+
+        logger.info("Connecting to MVP on %s", self._mpv_ipc_socket)
+        reader, _ = await asyncio.open_unix_connection(self._mpv_ipc_socket)
+        logger.info("Connected to MVP")
+
+        while True:
+            data = await reader.readuntil(b"\n")
+            logger.debug("Received event from MVP: %s", data)
+
+            try:
+                event_data = json.loads(data)
+            except json.JSONDecodeError as e:
+                logger.debug("Cannot decode MVP event: %s", e)
+
+            try:
+                event = MpvEvent(**event_data)
+            except ValidationError as e:
+                logger.debug("Received unknown data from MPV: %s", e)
+                continue
+
+            if event.name == "idle":
+                logger.info("Player stopped")
+                self._state = State.STOPPED
+            elif event.name == "pause":
+                logger.info("Player paused")
+                self._state = State.PAUSED
+            elif event.name == "start-file":
+                logger.info("Player playing")
+                self._state = State.PLAYING
+            elif event.name == "unpause":
+                logger.info("Player playing")
+                self._state = State.PLAYING
+            else:
+                logger.debug("Unknow MPV event %s", event.name)
+
     def _send_command(self, *command: str) -> Optional[Dict]:
         """Send a command to MPV and return the response."""
         command_id = self._get_command_id()
         msg = {"command": command, "request_id": command_id}
-        logger.debug("Sending MPV commanv %s", msg)
+        logger.debug("Sending MPV command %s", msg)
 
         data = json.dumps(msg).encode("utf8") + b"\n"
         self._connection.sendall(data)

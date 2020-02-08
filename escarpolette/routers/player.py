@@ -1,13 +1,17 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
 
 from escarpolette.player import State, get_player, Player
 from escarpolette.schemas import PlayerSchema
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
 @router.get("/", response_model=PlayerSchema)
-def get(player: Player = Depends(get_player)) -> PlayerSchema:
+async def get(player: Player = Depends(get_player)) -> PlayerSchema:
+    logger.debug("GET player state")
     data = PlayerSchema(state=player.get_state().name)
     return data
 

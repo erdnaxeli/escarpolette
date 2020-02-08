@@ -46,7 +46,6 @@ def post(
     if not rules.can_add_item(current_user, item, db):
         raise TooManyRequests
 
-    playlist.items.append(item)
     db.add(playlist)
     db.flush()
 
