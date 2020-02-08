@@ -7,9 +7,9 @@ from sqlalchemy.orm import Session
 from .dependencies import get_db, get_current_playlist
 from escarpolette.login import get_current_user, User
 from escarpolette.models import Item, Playlist
-from escarpolette.player import get_player, Player
+from escarpolette.player import get_player, Player, State
 from escarpolette.schemas.item import ItemSchemaIn, ItemSchemaOut
-from escarpolette.schemas.playlist import PlaylistSchemaOut
+from escarpolette.schemas.playlist import PlayingItem, PlaylistSchemaOut
 from escarpolette.tools import get_content_metadata
 from escarpolette.rules import rules
 
@@ -23,20 +23,15 @@ ERROR_CONFLICT_MSG = "This item is already waiting to be played"
 @router.get("/", response_model=PlaylistSchemaOut)
 def get(
     current_playlist: Playlist = Depends(get_current_playlist),
+    player: Player = Depends(get_player),
 ) -> PlaylistSchemaOut:
     playlist = PlaylistSchemaOut()
+    is_stopped = player.get_state() == State.STOPPED
 
     for item in current_playlist.items:
-        playlist.items.append(
-            ItemSchemaOut(
-                artist=item.artist,
-                duration=item.duration,
-                title=item.title,
-                url=item.url,
-            )
-        )
-        if item.played:
-            playlist.idx += 1
+        playlist.items.append(ItemSchemaOut.from_orm(item))
+        if not is_stopped and not item.played and playlist.playing is None:
+            playlist.playing = PlayingItem(id=item.id, duration=0)
 
     return playlist
 
