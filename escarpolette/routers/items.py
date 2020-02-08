@@ -14,10 +14,10 @@ router = APIRouter()
 
 
 @router.get("/", response_model=PlaylistSchemaOut)
-def get(db: Session = Depends(get_db)) -> PlaylistSchemaOut:
+def get(current_playlist: Playlist = Depends(get_current_playlist), db: Session = Depends(get_db)) -> PlaylistSchemaOut:
     playlist = PlaylistSchemaOut()
 
-    for item in db.query(Item).order_by(Item.created_at).all():
+    for item in current_playlist.items:
         playlist.items.append(
             ItemSchemaOut(
                 artist=item.artist,
