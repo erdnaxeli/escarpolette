@@ -33,7 +33,7 @@ def get(db: Session = Depends(get_db)) -> PlaylistSchemaOut:
 
 
 @router.post("/", status_code=201, response_model=ItemSchemaOut)
-def post(
+async def post(
     data: ItemSchemaIn,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
@@ -49,7 +49,7 @@ def post(
     db.add(playlist)
     db.flush()
 
-    player.add_item(item.url)
+    await player.add_item(item.url)
 
     db.commit()
 

@@ -17,11 +17,11 @@ async def get(player: Player = Depends(get_player)) -> PlayerSchema:
 
 
 @router.patch("/", responses={400: {}})
-def patch(data: PlayerSchema, player: Player = Depends(get_player)) -> None:
+async def patch(data: PlayerSchema, player: Player = Depends(get_player)) -> None:
     if data.state == State.PLAYING:
-        player.play()
+        await player.play()
     elif data.state == State.PAUSED:
-        player.pause()
+        await player.pause()
     else:
         raise HTTPException(
             status_code=400, detail=f"The state {data.state} cannot be set"
