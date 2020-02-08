@@ -14,7 +14,9 @@ router = APIRouter()
 
 
 @router.get("/", response_model=PlaylistSchemaOut)
-def get(current_playlist: Playlist = Depends(get_current_playlist), db: Session = Depends(get_db)) -> PlaylistSchemaOut:
+def get(
+    current_playlist: Playlist = Depends(get_current_playlist),
+) -> PlaylistSchemaOut:
     playlist = PlaylistSchemaOut()
 
     for item in current_playlist.items:
@@ -41,11 +43,12 @@ async def post(
     player: Player = Depends(get_player),
 ) -> Item:
     metadata = get_content_metadata(data.url)
-    item = Item(user_id=current_user.id, playlist=playlist, **metadata)
+    item = Item(user_id=current_user.id, **metadata)
 
     if not rules.can_add_item(current_user, item, db):
         raise TooManyRequests
 
+    playlist.items.append(item)
     db.add(playlist)
     db.flush()
 
