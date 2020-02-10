@@ -21,7 +21,7 @@ ERROR_CONFLICT_MSG = "This item is already waiting to be played"
 
 
 @router.get("/", response_model=PlaylistSchemaOut)
-def get(
+async def get(
     current_playlist: Playlist = Depends(get_current_playlist),
     player: Player = Depends(get_player),
 ) -> PlaylistSchemaOut:
@@ -31,8 +31,9 @@ def get(
     for item in current_playlist.items:
         playlist.items.append(ItemSchemaOut.from_orm(item))
         if not is_stopped and not item.played and playlist.playing is None:
-            playlist.playing = PlayingItem(id=item.id, duration=0)
-
+            playlist.playing = PlayingItem(
+                id=item.id, duration=await player.get_current_item_position()
+            )
     return playlist
 
 
