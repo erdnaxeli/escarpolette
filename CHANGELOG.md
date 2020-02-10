@@ -2,6 +2,11 @@
 
 ## 0 (dev)
 
+### 0.6.0
+
+Features:
+* `/items` return the current playing item info
+
 ### 0.5.1
 
 Bugfix:
