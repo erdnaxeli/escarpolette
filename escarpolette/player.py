@@ -90,6 +90,13 @@ class Player:
 
         return response.data["title"]
 
+    async def get_current_item_position(self) -> Optional[int]:
+        response = await self._send_command("get_property", "playback-time")
+        if not response:
+            return None
+
+        return response.data
+
     def get_state(self) -> State:
         return self._state
 
@@ -119,7 +126,7 @@ class Player:
         return self._command_id
 
     async def _get_mpv_connection(
-        self
+        self,
     ) -> Tuple[asyncio.StreamReader, asyncio.StreamWriter]:
         logger.info("Connecting to MVP on %s", self._mpv_ipc_socket)
         reader, writer = await asyncio.open_unix_connection(self._mpv_ipc_socket)
