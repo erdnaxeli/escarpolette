@@ -32,7 +32,7 @@ async def get(
         playlist.items.append(ItemSchemaOut.from_orm(item))
         if not is_stopped and not item.played and playlist.playing is None:
             playlist.playing = PlayingItem(
-                id=item.id, duration=await player.get_current_item_position()
+                id=item.id, position=await player.get_current_item_position()
             )
     return playlist
 
