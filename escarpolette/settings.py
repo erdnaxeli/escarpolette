@@ -1,4 +1,5 @@
 import os
+from dataclasses import dataclass
 from datetime import timedelta
 from configparser import ConfigParser
 from typing import TextIO
@@ -7,23 +8,24 @@ from uuid import uuid4
 from xdg import XDG_DATA_HOME
 
 
+@dataclass
 class Default:
     # Server
-    HOST = "127.0.0.1"
-    PORT = 8000
+    HOST: str = "127.0.0.1"
+    PORT: int = 8000
 
     # Database
     # SQLALCHEMY_TRACK_MODIFICATIONS = False
-    DATABASE_URI = f"sqlite:///{XDG_DATA_HOME}/escarpolette/db.sqlite"
+    DATABASE_URI: str = f"sqlite:///{XDG_DATA_HOME}/escarpolette/db.sqlite"
 
     # MPV
     if os.environ.get("ANDROID_DATA") or os.environ.get("ANDROID_ROOT"):
-        MPV_IPC_SOCKET = "/data/data/com.termux/files/home/.mpv-socket"
+        MPV_IPC_SOCKET: str = "/data/data/com.termux/files/home/.mpv-socket"
     else:
-        MPV_IPC_SOCKET = "/tmp/mpv-socket"
+        MPV_IPC_SOCKET: str = "/tmp/mpv-socket"
 
     # Authentication
-    REMEMBER_COOKIE_DURATION = timedelta(days=390)  # ~13 months
+    REMEMBER_COOKIE_DURATION: timedelta = timedelta(days=390)  # ~13 months
 
 
 class Config(Default):
@@ -61,6 +63,7 @@ class Config(Default):
         config["SECURITY"] = {"SECRET_KEY": self.SECRET_KEY}
         config["SERVER"] = {"HOST": self.HOST, "PORT": str(self.PORT)}
 
+        file.truncate(0)
         config.write(file)
 
         # save a singleton

@@ -73,7 +73,7 @@ def run(
 
     if config_file is None:
         config_file = open(
-            path.join(XDG_CONFIG_HOME, "escarpolette", "escarpolette.conf"), "w+"
+            path.join(XDG_CONFIG_HOME, "escarpolette", "escarpolette.conf"), "r+"
         )
 
     config = Config(config_file)
