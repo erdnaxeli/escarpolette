@@ -1,4 +1,5 @@
 import logging
+import importlib_metadata
 from os import makedirs, path
 from typing import Optional, TextIO
 
@@ -37,7 +38,17 @@ DEFAULT_DATA_FOLDER = path.join(XDG_DATA_HOME, "escarpolette")
     type=bool,
     is_flag=True,
 )
-def run(config_file: Optional[TextIO], host: str, port: int, dev: bool) -> None:
+@click.option(
+    "-V",
+    "--version",
+    default=False,
+    help="print the version and quit",
+    type=bool,
+    is_flag=True,
+)
+def run(
+    config_file: Optional[TextIO], host: str, port: int, dev: bool, version: bool
+) -> None:
     """Run the application.
 
     Create default folders for config and data and the default config file if
@@ -45,8 +56,11 @@ def run(config_file: Optional[TextIO], host: str, port: int, dev: bool) -> None:
 
     TODO:
         * setup loging
-        * use a FastAPI's "start" event to setup the app, and switch back to uvicorn?
     """
+    if version:
+        print("Escarpolette " + importlib_metadata.version("escarpolette"))
+        return
+
     if not path.exists(DEFAULT_CONFIG_FOLDER):
         makedirs(DEFAULT_CONFIG_FOLDER)
 
