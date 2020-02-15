@@ -39,11 +39,11 @@ def create_app(config: Config):
         return response
 
     @app.on_event("shutdown")
-    def shutdown():
+    def shutdown() -> None:
         get_player().shutdown()
 
     @app.on_event("startup")
-    async def start():
+    async def start() -> None:
         db.init_app(config)
 
         with db.get_db() as db_session:
