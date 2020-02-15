@@ -19,7 +19,7 @@ def create_new_playlist(db: Session):
     db.commit()
 
 
-async def create_app(config: Config):
+def create_app(config: Config):
     app = FastAPI(
         title="Escarpolette",
         version="0.1",
@@ -27,15 +27,6 @@ async def create_app(config: Config):
     )
 
     routers.init_app(app)
-    db.init_app(config)
-    await get_player().init_app(config)
-
-    @app.on_event("shutdown")
-    def shutdown():
-        get_player().shutdown()
-
-    with db.get_db() as db_session:
-        create_new_playlist(db_session)
 
     app.add_middleware(
         CORSMiddleware, allow_credentials=True, allow_methods=["*"], allow_origins=["*"]
@@ -46,5 +37,18 @@ async def create_app(config: Config):
         request_logger.info("%s %s", request.method, request.url.path)
         response = await call_next(request)
         return response
+
+    @app.on_event("shutdown")
+    def shutdown() -> None:
+        get_player().shutdown()
+
+    @app.on_event("startup")
+    async def start() -> None:
+        db.init_app(config)
+
+        with db.get_db() as db_session:
+            create_new_playlist(db_session)
+
+        await get_player().init_app(config)
 
     return app

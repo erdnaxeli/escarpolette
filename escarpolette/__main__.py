@@ -1,11 +1,10 @@
-import asyncio
 import logging
-from os import mkdir, path
+import importlib_metadata
+from os import makedirs, path
 from typing import Optional, TextIO
 
-import asyncclick as click
-from hypercorn.config import Config as HConfig
-from hypercorn.asyncio import serve
+import click
+import uvicorn
 from xdg import XDG_CONFIG_HOME, XDG_DATA_HOME
 
 from escarpolette import create_app
@@ -39,7 +38,17 @@ DEFAULT_DATA_FOLDER = path.join(XDG_DATA_HOME, "escarpolette")
     type=bool,
     is_flag=True,
 )
-async def run(config_file: Optional[TextIO], host: str, port: int, dev: bool) -> None:
+@click.option(
+    "-V",
+    "--version",
+    default=False,
+    help="print the version and quit",
+    type=bool,
+    is_flag=True,
+)
+def run(
+    config_file: Optional[TextIO], host: str, port: int, dev: bool, version: bool
+) -> None:
     """Run the application.
 
     Create default folders for config and data and the default config file if
@@ -47,13 +56,16 @@ async def run(config_file: Optional[TextIO], host: str, port: int, dev: bool) ->
 
     TODO:
         * setup loging
-        * use a FastAPI's "start" event to setup the app, and switch back to uvicorn?
     """
+    if version:
+        print("Escarpolette " + importlib_metadata.version("escarpolette"))
+        return
+
     if not path.exists(DEFAULT_CONFIG_FOLDER):
-        mkdir(DEFAULT_CONFIG_FOLDER)
+        makedirs(DEFAULT_CONFIG_FOLDER)
 
     if not path.exists(DEFAULT_DATA_FOLDER):
-        mkdir(DEFAULT_DATA_FOLDER)
+        makedirs(DEFAULT_DATA_FOLDER)
 
     ######################
     # read configuration #
@@ -83,7 +95,7 @@ async def run(config_file: Optional[TextIO], host: str, port: int, dev: bool) ->
     ###################
     # create ASGI app #
     ###################
-    app = await create_app(config)
+    app = create_app(config)
 
     ####################
     # start web server #
@@ -92,11 +104,7 @@ async def run(config_file: Optional[TextIO], host: str, port: int, dev: bool) ->
     host = host or config.HOST
     port = port or config.PORT
 
-    server_config = HConfig()
-    server_config.bind = [f"{host}:{port}"]
-    loop = asyncio.get_event_loop()
-    future = loop.create_task(serve(app, server_config))
-    await future
+    uvicorn.run(app, host=host, port=port, access_log=False, log_config=None)
 
 
-run(_anyio_backend="asyncio")
+run()

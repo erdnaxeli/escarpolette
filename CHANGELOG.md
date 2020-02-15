@@ -2,6 +2,16 @@
 
 ## 0 (dev)
 
+### 0.7.0
+
+Features:
+* `/items`: `playing.duration` becomes `playing.position` #24
+* create all folders for default config and cache location #26
+* new options -V or --version
+
+Bugfix:
+* run again en Android by switching back to uvicorn #27
+
 ### 0.6.0
 
 Features:

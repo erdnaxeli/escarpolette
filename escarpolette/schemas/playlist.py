@@ -7,7 +7,7 @@ from escarpolette.schemas.item import ItemSchemaOut
 
 class PlayingItem(BaseModel):
     id: int = Field(..., description="The id of the item currently playing")
-    duration: int = Field(
+    position: int = Field(
         ..., description="The part, in seconds, of the item already played."
     )
 
