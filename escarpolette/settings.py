@@ -1,3 +1,4 @@
+import os
 from datetime import timedelta
 from configparser import ConfigParser
 from typing import TextIO
@@ -14,6 +15,12 @@ class Default:
     # Database
     # SQLALCHEMY_TRACK_MODIFICATIONS = False
     DATABASE_URI = f"sqlite:///{XDG_DATA_HOME}/escarpolette/db.sqlite"
+
+    # MPV
+    if os.environ.get("ANDROID_DATA") or os.environ.get("ANDROID_ROOT"):
+        MPV_IPC_SOCKET = "/data/data/com.termux/files/home/.mpv-socket"
+    else:
+        MPV_IPC_SOCKET = "/tmp/mpv-socket"
 
     # Authentication
     REMEMBER_COOKIE_DURATION = timedelta(days=390)  # ~13 months
@@ -46,15 +53,12 @@ class Config(Default):
         self.HOST = config["SERVER"].get("HOST", self.HOST)
         self.PORT = config["SERVER"].getint("PORT", fallback=self.PORT)
         self.DATABASE_URI = config["DATABASE"].get("URI", self.DATABASE_URI)
-        self.MPV_IPC_SOCKET = config["MPV"].get("IPC_SOCKET")
+        self.MPV_IPC_SOCKET = config["MPV"].get("IPC_SOCKET", self.MPV_IPC_SOCKET)
         self.SECRET_KEY = config["SECURITY"].get("SECRET_KEY", str(uuid4()))
 
         config["DATABASE"] = {"URI": self.DATABASE_URI}
-
-        if self.MPV_IPC_SOCKET is not None:
-            config["MVP"] = {"IPC_SOCKET": self.MPV_IPC_SOCKET}
-
-        config["SECURTIY"] = {"SECRET_KEY": self.SECRET_KEY}
+        config["MPV"] = {"IPC_SOCKET": self.MPV_IPC_SOCKET}
+        config["SECURITY"] = {"SECRET_KEY": self.SECRET_KEY}
         config["SERVER"] = {"HOST": self.HOST, "PORT": str(self.PORT)}
 
         config.write(file)
