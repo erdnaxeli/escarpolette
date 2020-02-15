@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from os import mkdir, path
+from os import makedirs, path
 from typing import Optional, TextIO
 
 import asyncclick as click
@@ -50,10 +50,10 @@ async def run(config_file: Optional[TextIO], host: str, port: int, dev: bool) ->
         * use a FastAPI's "start" event to setup the app, and switch back to uvicorn?
     """
     if not path.exists(DEFAULT_CONFIG_FOLDER):
-        mkdir(DEFAULT_CONFIG_FOLDER)
+        makedirs(DEFAULT_CONFIG_FOLDER)
 
     if not path.exists(DEFAULT_DATA_FOLDER):
-        mkdir(DEFAULT_DATA_FOLDER)
+        makedirs(DEFAULT_DATA_FOLDER)
 
     ######################
     # read configuration #
