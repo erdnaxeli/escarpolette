@@ -2,6 +2,17 @@
 
 ## 0 (dev)
 
+### 0.7.2
+
+Bugfix:
+* gracefully shutdown MPV events listener
+
+### 0.7.1
+
+Bugfix:
+* fix configuration being not readed
+* fix default MPV socket location on android
+
 ### 0.7.0
 
 Features:
