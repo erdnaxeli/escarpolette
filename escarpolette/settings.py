@@ -63,7 +63,8 @@ class Config(Default):
         config["SECURITY"] = {"SECRET_KEY": self.SECRET_KEY}
         config["SERVER"] = {"HOST": self.HOST, "PORT": str(self.PORT)}
 
-        file.truncate(0)
+        file.close()
+        file = open(file.name, "w")
         config.write(file)
 
         # save a singleton
