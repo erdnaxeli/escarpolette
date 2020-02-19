@@ -39,6 +39,7 @@ class Player:
     """Control mpv using IPC."""
 
     _command_id = 0
+    _events_listener: Optional[asyncio.Task] = None
     _mpv_ipc_socket = "/tmp/mpv-socket"
     _mpv: Optional[Popen] = None
     _mpv_reader: asyncio.StreamReader
@@ -60,15 +61,21 @@ class Player:
         await asyncio.sleep(2)
 
         loop = asyncio.get_event_loop()
-        loop.create_task(self._listen_events())
+        self._events_listener = loop.create_task(self._listen_events())
         self._mpv_reader, self._mpv_writer = await self._get_mpv_connection()
 
     def shutdown(self) -> None:
         if self._mpv_writer is not None:
             self._mpv_writer.close()
 
+        if self._events_listener is not None:
+            logger.debug("Shutting down MPV events listener")
+            self._events_listener.cancel()
+            asyncio.gather(self._events_listener, return_exceptions=True)
+
         if self._mpv is not None:
             # TODO: find why MPV does not respond to a SIGTERM signal
+            logger.info("Shutting down MPV")
             self._mpv.kill()
 
     async def add_item(self, url: str) -> None:
