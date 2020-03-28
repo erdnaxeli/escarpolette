@@ -23,7 +23,7 @@ importlib_metadata = "^1.5.0"
 [tool.poetry.dev-dependencies]
 pytest = "^4.1"
 black = {version = "^18.3-alpha.0",allow-prereleases = true}
-mypy = "^0.761"
+mypy = "^0.770"
 radon = "^4.0"
 pytest-mock = "^1.11"
 pre-commit = "^1.20"
