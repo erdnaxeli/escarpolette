@@ -1,8 +1,10 @@
 import logging
+from typing import Awaitable, Callable
 
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
+from starlette.responses import Response
 from sqlalchemy.orm import Session
 
 from escarpolette import db, routers
@@ -13,13 +15,13 @@ from escarpolette.player import get_player
 request_logger = logging.getLogger("escarpolette")
 
 
-def create_new_playlist(db: Session):
+def create_new_playlist(db: Session) -> None:
     playlist = Playlist()
     db.add(playlist)
     db.commit()
 
 
-def create_app(config: Config):
+def create_app(config: Config) -> FastAPI:
     app = FastAPI(
         title="Escarpolette",
         version="0.1",
@@ -33,7 +35,9 @@ def create_app(config: Config):
     )
 
     @app.middleware("http")
-    async def log_request(request: Request, call_next):
+    async def log_request(
+        request: Request, call_next: Callable[[Request], Awaitable[Response]]
+    ) -> Response:
         request_logger.info("%s %s", request.method, request.url.path)
         response = await call_next(request)
         return response

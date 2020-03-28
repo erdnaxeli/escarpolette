@@ -2,7 +2,7 @@ import os
 from dataclasses import dataclass
 from datetime import timedelta
 from configparser import ConfigParser
-from typing import TextIO
+from typing import Optional, TextIO
 from uuid import uuid4
 
 from xdg import XDG_DATA_HOME
@@ -71,5 +71,5 @@ class Config(Default):
         Config.current_config = self
 
 
-def get_current_config():
+def get_current_config() -> Optional[Config]:
     return Config.current_config

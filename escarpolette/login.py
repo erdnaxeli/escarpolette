@@ -21,7 +21,7 @@ def get_current_user(
     response: Response,
     token: str = Cookie(None),
     config: Config = Depends(get_current_config),
-):
+) -> User:
     if not token:
         current_user = User(id=str(uuid4()))
     else:

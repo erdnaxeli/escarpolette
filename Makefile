@@ -26,7 +26,7 @@ run:
 	$(POETRY) run python -m escarpolette --dev
 
 build:
-	$(MYPY) --ignore-missing-import escarpolette
+	$(MYPY) escarpolette
 
 tests:
 	$(PYTEST) tests/

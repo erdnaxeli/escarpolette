@@ -1,7 +1,9 @@
 from contextlib import contextmanager
 from importlib import resources
+from typing import Iterator
 
 from sqlalchemy import Column, create_engine, String
+from sqlalchemy.engine.strategies import EngineStrategy
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from sqlalchemy.orm import sessionmaker, Session
 
@@ -17,7 +19,7 @@ class Version(Base):
     version = Column(String, primary_key=True)
 
 
-def init_app(config: Config):
+def init_app(config: Config) -> None:
     engine = create_engine(
         config.DATABASE_URI, connect_args={"check_same_thread": False}
     )
@@ -26,7 +28,7 @@ def init_app(config: Config):
     apply_migrations(engine)
 
 
-def apply_migrations(engine):
+def apply_migrations(engine: EngineStrategy) -> None:
     Base.metadata.create_all(bind=engine, tables=[Version.__table__], checkfirst=True)
 
     db: Session = SessionLocal()
@@ -54,7 +56,7 @@ def apply_migrations(engine):
 
 
 @contextmanager
-def get_db():
+def get_db() -> Iterator[Session]:
     db: Session = SessionLocal()
     db.execute("PRAGMA foreign_keys = ON")
     try:
