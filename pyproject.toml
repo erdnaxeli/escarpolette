@@ -9,7 +9,7 @@ homepage = "https://github.com/erdnaxeli/escarpolette"
 repository = "https://github.com/erdnaxeli/escarpolette.git"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 sqlalchemy = "^1.2"
 youtube-dl = "*"
 fastapi = ">=0.47.1,<0.55.0"
@@ -28,6 +28,7 @@ radon = "^4.0"
 pytest-mock = "^3.0"
 pre-commit = "^2.3"
 pdbpp = "^0.10.2"
+pytest-asyncio = "^0.10.0"
 
 [tool.poetry.scripts]
 escarpolette = "escarpolette:__main__"
