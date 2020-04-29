@@ -19,6 +19,9 @@ db-upgrade:
 format:
 	$(BLACK) $(FLASK_APP) tests
 
+format-ci:
+	$(BLACK) --check $(FLASK_APP) tests
+
 complexity:
 	$(RADON) cc --total-average -nB -s escarpolette
 
