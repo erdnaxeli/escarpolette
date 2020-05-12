@@ -174,7 +174,7 @@ description = "A library for property-based testing"
 name = "hypothesis"
 optional = false
 python-versions = ">=3.5.2"
-version = "5.11.0"
+version = "5.13.0"
 
 [package.dependencies]
 attrs = ">=19.2.0"
@@ -659,7 +659,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "c13115ddca8865a5b6974b0e7b04fef5b0e0a8e65037d047caae0aa62916402f"
+content-hash = "7cadf8f70e74e2d2f9567c8b1864e41ee60629ebcfd38312ad8c5b7d021a593f"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -736,8 +736,8 @@ httptools = [
     {file = "httptools-0.1.1.tar.gz", hash = "sha256:41b573cf33f64a8f8f3400d0a7faf48e1888582b6f6e02b82b9bd4f0bf7497ce"},
 ]
 hypothesis = [
-    {file = "hypothesis-5.11.0-py3-none-any.whl", hash = "sha256:ca2adce26816d6ef690f607650f3035814281a0c37b8c8616a1dd058d23c0268"},
-    {file = "hypothesis-5.11.0.tar.gz", hash = "sha256:66c4b6267444b7443ca3fd07064164f7665c940f2847c71b2ed9ca68e2142af5"},
+    {file = "hypothesis-5.13.0-py3-none-any.whl", hash = "sha256:4ea948bcc02eb61cab956a723309010f4b0050c7b3b9c4087302923a1ec02405"},
+    {file = "hypothesis-5.13.0.tar.gz", hash = "sha256:402ac3101b5a96b38ea794ce433b76234fb2e83ec539d06baa563197a3709486"},
 ]
 identify = [
     {file = "identify-1.4.15-py2.py3-none-any.whl", hash = "sha256:88ed90632023e52a6495749c6732e61e08ec9f4f04e95484a5c37b9caf40283c"},
