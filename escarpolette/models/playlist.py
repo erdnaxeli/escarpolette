@@ -1,4 +1,4 @@
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Session, relationship
 from sqlalchemy.ext.orderinglist import ordering_list
 
 from escarpolette.db import Base, get_db
@@ -16,12 +16,12 @@ class Playlist(BaseModelMixin, Base):
     )
 
     @classmethod
-    def get_current_playlist(cls, db_session):
+    def get_current_playlist(cls, db_session: Session) -> "Playlist":
         playlist = db_session.query(cls).order_by(Playlist.created_at.desc()).first()
         return playlist
 
     @classmethod
-    def item_ended(cls):
+    def item_ended(cls) -> None:
         """Mark current playing item as played."""
         with get_db() as db_session:
             playlist = cls.get_current_playlist(db_session)

@@ -153,7 +153,7 @@ class Player:
         logger.debug("Received MVP message %s", message)
         return message
 
-    async def _listen_events(self):
+    async def _listen_events(self) -> None:
         """Listen for events from MVP.
 
         Open a connection to MVP, listen for events and update the playlist
@@ -163,6 +163,8 @@ class Player:
 
         while True:
             message = await self._get_mpv_message(reader)
+            if message is None:
+                continue
 
             try:
                 event = MpvEvent(**message)
@@ -223,5 +225,5 @@ class Player:
 _current_player = Player()
 
 
-def get_player():
+def get_player() -> Player:
     return _current_player
