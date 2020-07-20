@@ -25,7 +25,7 @@ pytest = "^5.4"
 black = {version = "^19.10b0",allow-prereleases = true}
 mypy = "^0.782"
 radon = "^4.0"
-pytest-mock = "^3.1"
+pytest-mock = "^3.2"
 pre-commit = "^2.6"
 pdbpp = "^0.10.2"
 pytest-asyncio = "^0.14.0"
