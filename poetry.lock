@@ -177,17 +177,19 @@ description = "A library for property-based testing"
 name = "hypothesis"
 optional = false
 python-versions = ">=3.5.2"
-version = "5.23.11"
+version = "5.26.1"
 
 [package.dependencies]
 attrs = ">=19.2.0"
 sortedcontainers = ">=2.1.0,<3.0.0"
 
 [package.extras]
-all = ["django (>=2.2)", "dpcontracts (>=0.4)", "lark-parser (>=0.6.5)", "numpy (>=1.9.0)", "pandas (>=0.19)", "pytest (>=4.3)", "python-dateutil (>=1.4)", "pytz (>=2014.1)"]
+all = ["black (>=19.10b0)", "click (>=7.0)", "django (>=2.2)", "dpcontracts (>=0.4)", "lark-parser (>=0.6.5)", "numpy (>=1.9.0)", "pandas (>=0.19)", "pytest (>=4.3)", "python-dateutil (>=1.4)", "pytz (>=2014.1)"]
+cli = ["click (>=7.0)", "black (>=19.10b0)"]
 dateutil = ["python-dateutil (>=1.4)"]
 django = ["pytz (>=2014.1)", "django (>=2.2)"]
 dpcontracts = ["dpcontracts (>=0.4)"]
+ghostwriter = ["black (>=19.10b0)"]
 lark = ["lark-parser (>=0.6.5)"]
 numpy = ["numpy (>=1.9.0)"]
 pandas = ["pandas (>=0.19)"]
@@ -678,7 +680,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "ba0b2c16e1c9da2efecf47efcb35d25029cfc85a1fc815328ad1c981192912d3"
+content-hash = "26cffc9681213abd3557d1b0fbf9a8e1fdb79a9524b62351975b3d2d306f5315"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -756,8 +758,8 @@ httptools = [
     {file = "httptools-0.1.1.tar.gz", hash = "sha256:41b573cf33f64a8f8f3400d0a7faf48e1888582b6f6e02b82b9bd4f0bf7497ce"},
 ]
 hypothesis = [
-    {file = "hypothesis-5.23.11-py3-none-any.whl", hash = "sha256:c0ed9cbbba273fb4ff4148ff539b73b52d5b6422b1bb86a7901f8cbb43f49db3"},
-    {file = "hypothesis-5.23.11.tar.gz", hash = "sha256:69882d263175bd4731200c35c1bdfdc0a6c1af08a85672cdc51af26b18e3cac7"},
+    {file = "hypothesis-5.26.1-py3-none-any.whl", hash = "sha256:612e833bb37bcaf5330a6ee45d634c7dd132be0e8dae1f7dd639e902a95d9cd2"},
+    {file = "hypothesis-5.26.1.tar.gz", hash = "sha256:8eca3095fa02d89d9564a46acee4f9f419ca7cb815724b40690454b98f2fdf62"},
 ]
 identify = [
     {file = "identify-1.4.24-py2.py3-none-any.whl", hash = "sha256:5519601b70c831011fb425ffd214101df7639ba3980f24dc283f7675b19127b3"},
