@@ -29,7 +29,7 @@ pytest-mock = "^3.2"
 pre-commit = "^2.6"
 pdbpp = "^0.10.2"
 pytest-asyncio = "^0.14.0"
-hypothesis = "^5.23.11"
+hypothesis = "^6.46.3"
 
 [tool.poetry.scripts]
 escarpolette = "escarpolette:__main__"
